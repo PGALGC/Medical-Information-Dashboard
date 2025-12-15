@@ -1,0 +1,2971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Info - Kamal Dhunna</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #16222a;
+            --secondary-dark: #2a3849;
+            --accent-color-1: #2ecc71;
+            --accent-color-2: #27ae60;
+            --text-light: #f0f0f0;
+            --text-muted: #a0aec0;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --border-color: #34495e;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 15px;
+            font-size: 14px;
+            transition: all 0.5s ease;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: linear-gradient(to right, var(--accent-color-1), var(--accent-color-2));
+            box-shadow: var(--shadow);
+            transition: all 0.5s ease;
+            position: relative;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 3px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+        
+        .app-version {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-top: 8px;
+            color: white;
+        }
+        
+        .header-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .header-dropdown-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .header-dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .header-dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--secondary-dark);
+            min-width: 220px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-top: 5px;
+            right: 0;
+        }
+        
+        .header-dropdown-content.show {
+            display: block;
+        }
+        
+        .header-dropdown-item {
+            color: var(--text-light);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .header-dropdown-item:hover {
+            background: linear-gradient(to right, 
+                color-mix(in srgb, var(--accent-color-1) 20%, transparent),
+                color-mix(in srgb, var(--accent-color-2) 20%, transparent)
+            );
+        }
+        
+        .header-dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .header-controls {
+                position: static;
+                margin-top: 15px;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .header-dropdown-content {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 300px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .header-dropdown-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        .main-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 1100px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: linear-gradient(145deg, var(--secondary-dark) 0%, color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-1) 20%) 100%);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--accent-color-1);
+            border-left: 2px solid color-mix(in srgb, var(--accent-color-1) 30%, transparent);
+            transition: all 0.5s ease;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: var(--accent-color-1);
+            font-size: 1.2rem;
+            padding-bottom: 8px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-2));
+            transition: all 0.5s ease;
+        }
+        
+        .section-title i {
+            margin-right: 8px;
+            font-size: 1rem;
+            color: var(--accent-color-2);
+            transition: all 0.5s ease;
+        }
+        
+        .section-title-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        th {
+            text-align: left;
+            padding: 10px 8px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-2));
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: linear-gradient(to right, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 10%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 10%)
+            );
+            transition: all 0.5s ease;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 50%, var(--accent-color-1));
+            transition: all 0.5s ease;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 10px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+            border-radius: 4px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color-1);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color-1) 30%, transparent);
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 70%, var(--accent-color-1) 10%),
+                color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-2) 10%)
+            );
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--accent-color-1), var(--accent-color-2));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--accent-color-2), var(--accent-color-1));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(to right, #c0392b, #e74c3c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, #f39c12, #d68910);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(to right, #d68910, #f39c12);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(to right, #2980b9, #3498db);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-info {
+            background: linear-gradient(to right, #17a2b8, #138496);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: linear-gradient(to right, #138496, #17a2b8);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .address-form {
+            margin-top: 10px;
+            padding: 15px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border-radius: 6px;
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        
+        .address-title {
+            font-size: 0.9rem;
+            color: var(--accent-color-1);
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-2));
+        }
+        
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-btn {
+            background: linear-gradient(to right, var(--accent-color-1), var(--accent-color-2));
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--secondary-dark);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            z-index: 100;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-top: 5px;
+            right: 0;
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            color: var(--text-light);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background: linear-gradient(to right, 
+                color-mix(in srgb, var(--accent-color-1) 20%, transparent),
+                color-mix(in srgb, var(--accent-color-2) 20%, transparent)
+            );
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .controls-section {
+            display: none;
+        }
+        
+        .controls-left, .controls-right {
+            flex: 1;
+        }
+        
+        .status-message {
+            padding: 10px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            background: linear-gradient(to right, 
+                color-mix(in srgb, var(--accent-color-1) 15%, transparent),
+                color-mix(in srgb, var(--accent-color-2) 15%, transparent)
+            );
+            border-left: 3px solid var(--accent-color-1);
+            transition: all 0.5s ease;
+        }
+        
+        .status-success {
+            display: flex;
+        }
+        
+        .status-error {
+            background: linear-gradient(to right, 
+                color-mix(in srgb, #e74c3c 15%, transparent),
+                color-mix(in srgb, #c0392b 15%, transparent)
+            );
+            border-left: 3px solid #e74c3c;
+            display: flex;
+        }
+        
+        .delete-btn {
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, #e74c3c 10%, transparent),
+                color-mix(in srgb, #c0392b 10%, transparent)
+            );
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 5px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .delete-btn:hover {
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, #e74c3c 20%, transparent),
+                color-mix(in srgb, #c0392b 20%, transparent)
+            );
+            transform: translateY(-1px);
+        }
+        
+        .edit-btn {
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--accent-color-1) 10%, transparent),
+                color-mix(in srgb, var(--accent-color-2) 10%, transparent)
+            );
+            color: var(--accent-color-1);
+            border: 1px solid var(--accent-color-1);
+            padding: 5px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        
+        .edit-btn:hover {
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--accent-color-1) 20%, transparent),
+                color-mix(in srgb, var(--accent-color-2) 20%, transparent)
+            );
+            transform: translateY(-1px);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.9rem;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border-radius: 6px;
+            margin: 10px 0;
+            transition: all 0.5s ease;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: linear-gradient(to right, var(--accent-color-1), var(--accent-color-2));
+            color: white;
+            font-size: 0.8rem;
+            transition: all 0.5s ease;
+        }
+        
+        .compact-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .bp-table-container {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
+        .bp-table {
+            min-width: 1300px;
+        }
+        
+        .bp-table th, 
+        .bp-table td {
+            min-width: 110px;
+        }
+        
+        .med-table th:nth-child(1),
+        .med-table td:nth-child(1) {
+            width: 40%;
+        }
+        
+        .med-table th:nth-child(2),
+        .med-table td:nth-child(2) {
+            width: 20%;
+        }
+        
+        .med-table th:nth-child(3),
+        .med-table td:nth-child(3) {
+            width: 30%;
+        }
+        
+        .med-table th:nth-child(4),
+        .med-table td:nth-child(4) {
+            width: 10%;
+            text-align: center;
+        }
+        
+        .color-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        
+        .color-preview-box {
+            width: 60px;
+            height: 30px;
+            border-radius: 4px;
+            background: linear-gradient(to right, var(--accent-color-1), var(--accent-color-2));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .theme-effect-title {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            color: var(--accent-color-1);
+            font-weight: 600;
+            padding-bottom: 5px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-2));
+        }
+        
+        .theme-effects {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .theme-effect-item {
+            padding: 8px;
+            border-radius: 4px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .theme-effect-item i {
+            color: var(--accent-color-1);
+        }
+        
+        .profile-info {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border-radius: 6px;
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        
+        .profile-info p {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        
+        .profile-info strong {
+            color: var(--accent-color-1);
+            font-weight: 600;
+            min-width: 120px;
+            display: inline-block;
+        }
+        
+        .save-profile-btn {
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            color: var(--accent-color-1);
+            font-weight: 600;
+            min-width: 150px;
+        }
+        
+        .info-value {
+            color: var(--text-light);
+            flex: 1;
+        }
+        
+        .theme-select {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+        }
+        
+        .theme-color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: linear-gradient(to right, var(--color1), var(--color2));
+        }
+        
+        .data-management-section {
+            margin-top: 20px;
+        }
+        
+        .capture-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .capture-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-content {
+            background: var(--secondary-dark);
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-top: 4px solid var(--accent-color-1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            color: var(--accent-color-1);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            color: var(--text-muted);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--accent-color-1);
+        }
+        
+        .capture-content {
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--primary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--primary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .profile-display-actions {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .general-notes-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border-radius: 6px;
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        
+        .general-notes-title {
+            font-size: 0.9rem;
+            color: var(--accent-color-1);
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-2));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .general-notes-content {
+            min-height: 120px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 10px;
+            border-radius: 4px;
+            background: linear-gradient(145deg, 
+                color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-1) 5%),
+                color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%)
+            );
+            border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        
+        .general-notes-edit {
+            display: none;
+        }
+        
+        .general-notes-display {
+            white-space: pre-wrap;
+        }
+        
+        .general-notes-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .section {
+                padding: 12px;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .btn {
+                padding: 7px 14px;
+                font-size: 0.8rem;
+            }
+            
+            .bp-table {
+                min-width: 1000px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                padding: 15px;
+            }
+            
+            .modal-title {
+                font-size: 1.2rem;
+            }
+            
+            input, select, textarea {
+                font-size: 0.85rem;
+                padding: 7px 9px;
+            }
+            
+            .profile-info {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                margin-bottom: 10px;
+            }
+            
+            .info-label {
+                min-width: auto;
+                margin-bottom: 3px;
+            }
+            
+            .general-notes-section {
+                padding: 12px;
+            }
+            
+            .general-notes-actions {
+                flex-direction: column;
+            }
+            
+            .general-notes-actions .btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 1rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .section-title .dropdown-container {
+                align-self: flex-end;
+            }
+            
+            .dropdown-btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .button-container .btn {
+                width: 100%;
+            }
+            
+            .profile-display-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .edit-btn, .delete-btn {
+                width: 100%;
+                text-align: center;
+                margin-right: 0;
+            }
+            
+            .general-notes-content {
+                min-height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Medical Information Dashboard</h1>
+            <p class="subtitle">Kamal Dhunna - Personal Health Tracker</p>
+            <div class="app-version">v2.7 | General Notes | Complete Data Management</div>
+            
+            <div class="header-controls">
+                <button class="header-dropdown-btn" id="main-controls-btn">
+                    <i class="fas fa-bars"></i> Quick Actions
+                </button>
+                <div class="header-dropdown-content" id="main-controls-dropdown">
+                    <div class="header-dropdown-item" id="header-capture-all">
+                        <i class="fas fa-file-alt"></i> Complete Capture Details
+                    </div>
+                    <div class="header-dropdown-item" id="header-theme-selection">
+                        <i class="fas fa-palette"></i> Theme Selection
+                    </div>
+                    <div class="header-dropdown-item" id="header-data-management">
+                        <i class="fas fa-database"></i> Data Management
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="profile-section">
+            <section class="section">
+                <div class="section-title">
+                    <div class="section-title-left">
+                        <i class="fas fa-hospital"></i>
+                        <h2>Surgery/Clinic Details</h2>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="dropdown-btn" id="surgery-dropdown-btn">
+                            <i class="fas fa-cog"></i> Options
+                        </button>
+                        <div class="dropdown-content" id="surgery-dropdown">
+                            <div class="dropdown-item" id="edit-surgery">
+                                <i class="fas fa-edit"></i> Edit Details
+                            </div>
+                            <div class="dropdown-item" id="delete-surgery" style="color: #e74c3c;">
+                                <i class="fas fa-trash"></i> Delete Details
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-grid" id="surgery-form">
+                    <div class="form-group full-width">
+                        <label for="surgery-name">Surgery/Clinic Name</label>
+                        <input type="text" id="surgery-name" placeholder="Enter surgery or clinic name">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="surgery-phone">Phone Number</label>
+                        <input type="tel" id="surgery-phone" placeholder="Enter phone number">
+                    </div>
+                </div>
+                
+                <div class="address-form">
+                    <div class="address-title">
+                        <i class="fas fa-map-marker-alt"></i> Surgery Address
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="surgery-house">House No/Name</label>
+                            <input type="text" id="surgery-house" placeholder="e.g., 123 or Rose Cottage">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surgery-line1">Address Line 1</label>
+                            <input type="text" id="surgery-line1" placeholder="Street name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surgery-line2">Address Line 2</label>
+                            <input type="text" id="surgery-line2" placeholder="District or area">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surgery-town">Town/City</label>
+                            <input type="text" id="surgery-town" placeholder="Town or city">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surgery-county">County</label>
+                            <input type="text" id="surgery-county" placeholder="County">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="surgery-postcode">Post Code</label>
+                            <input type="text" id="surgery-postcode" placeholder="e.g., AB12 3CD">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary save-profile-btn" id="save-surgery-btn">
+                    <i class="fas fa-save"></i> Save Surgery Details
+                </button>
+                
+                <div class="profile-info" id="surgery-display" style="display: none;">
+                </div>
+            </section>
+            
+            <section class="section">
+                <div class="section-title">
+                    <div class="section-title-left">
+                        <i class="fas fa-user-injured"></i>
+                        <h2>Patient Details</h2>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="dropdown-btn" id="patient-dropdown-btn">
+                            <i class="fas fa-cog"></i> Options
+                        </button>
+                        <div class="dropdown-content" id="patient-dropdown">
+                            <div class="dropdown-item" id="edit-patient">
+                                <i class="fas fa-edit"></i> Edit Details
+                            </div>
+                            <div class="dropdown-item" id="delete-patient" style="color: #e74c3c;">
+                                <i class="fas fa-trash"></i> Delete Details
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-grid" id="patient-form">
+                    <div class="form-group full-width">
+                        <label for="patient-name">Full Name</label>
+                        <input type="text" id="patient-name" placeholder="Enter patient full name" value="Kamal Dhunna">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-dob">Date of Birth</label>
+                        <input type="date" id="patient-dob">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-phone">Phone Number</label>
+                        <input type="tel" id="patient-phone" placeholder="Enter patient phone number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-nhs">NHS Number</label>
+                        <input type="text" id="patient-nhs" placeholder="Enter NHS number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-hospital">Hospital Number</label>
+                        <input type="text" id="patient-hospital" placeholder="Enter hospital number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-next-kin-name">Next of Kin Name</label>
+                        <input type="text" id="patient-next-kin-name" placeholder="Enter next of kin name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patient-next-kin-phone">Next of Kin Phone</label>
+                        <input type="tel" id="patient-next-kin-phone" placeholder="Enter next of kin phone number">
+                    </div>
+                </div>
+                
+                <div class="address-form">
+                    <div class="address-title">
+                        <i class="fas fa-home"></i> Patient Address
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="patient-house">House No/Name</label>
+                            <input type="text" id="patient-house" placeholder="e.g., 123 or Rose Cottage">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="patient-line1">Address Line 1</label>
+                            <input type="text" id="patient-line1" placeholder="Street name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="patient-line2">Address Line 2</label>
+                            <input type="text" id="patient-line2" placeholder="District or area">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="patient-town">Town/City</label>
+                            <input type="text" id="patient-town" placeholder="Town or city">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="patient-county">County</label>
+                            <input type="text" id="patient-county" placeholder="County">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="patient-postcode">Post Code</label>
+                            <input type="text" id="patient-postcode" placeholder="e.g., AB12 3CD">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary save-profile-btn" id="save-patient-btn">
+                    <i class="fas fa-save"></i> Save Patient Details
+                </button>
+                
+                <div class="profile-info" id="patient-display" style="display: none;">
+                </div>
+            </section>
+        </div>
+        
+        <div class="main-sections">
+            <section class="section">
+                <div class="section-title">
+                    <div class="section-title-left">
+                        <i class="fas fa-pills"></i>
+                        <h2>Medication List</h2>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="dropdown-btn" id="medicines-dropdown-btn">
+                            <i class="fas fa-cog"></i> Options
+                        </button>
+                        <div class="dropdown-content" id="medicines-dropdown">
+                            <div class="dropdown-item" id="export-medicines-excel">
+                                <i class="fas fa-file-excel"></i> Export Medicines to Excel
+                            </div>
+                            <div class="dropdown-item" id="clear-medicines">
+                                <i class="fas fa-trash"></i> Clear All Medicines
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="medicine-table" class="med-table">
+                        <thead>
+                            <tr>
+                                <th>Medicine Name</th>
+                                <th>Dosage (mg)</th>
+                                <th>Due Time / Frequency</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="medicine-tbody">
+                        </tbody>
+                    </table>
+                    <div id="no-medicines" class="no-data">No medicines added. Click "Add Medicine" to start.</div>
+                </div>
+                
+                <div class="button-container">
+                    <button class="btn btn-primary" id="add-medicine-btn">
+                        <i class="fas fa-plus"></i> Add Medicine
+                    </button>
+                </div>
+            </section>
+            
+            <section class="section">
+                <div class="section-title">
+                    <div class="section-title-left">
+                        <i class="fas fa-heartbeat"></i>
+                        <h2>Blood Pressure & ECG Readings</h2>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="dropdown-btn" id="bp-dropdown-btn">
+                            <i class="fas fa-cog"></i> Options
+                        </button>
+                        <div class="dropdown-content" id="bp-dropdown">
+                            <div class="dropdown-item" id="export-bp-excel">
+                                <i class="fas fa-file-excel"></i> Export BP Readings to Excel
+                            </div>
+                            <div class="dropdown-item" id="clear-bp">
+                                <i class="fas fa-trash"></i> Clear All BP Readings
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bp-table-container">
+                    <table id="bp-table" class="bp-table">
+                        <thead>
+                            <tr>
+                                <th>DATE</th>
+                                <th>TIME</th>
+                                <th>SYSTOLIC</th>
+                                <th>DIASTOLIC</th>
+                                <th>PULSE</th>
+                                <th>SITTING DOWN</th>
+                                <th>STANDING UP</th>
+                                <th>ECG MONITOR</th>
+                                <th>TYPE DIAGNOSIS</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bp-tbody">
+                        </tbody>
+                    </table>
+                    <div id="no-bp" class="no-data">No readings recorded. Click "Add Reading" to start.</div>
+                </div>
+                
+                <div class="general-notes-section">
+                    <div class="general-notes-title">
+                        <div>
+                            <i class="fas fa-sticky-note"></i> General Notes
+                        </div>
+                        <button class="edit-btn" id="edit-general-notes-btn">
+                            <i class="fas fa-edit"></i> Edit Notes
+                        </button>
+                    </div>
+                    
+                    <div class="general-notes-content" id="general-notes-display">
+                    </div>
+                    
+                    <div class="general-notes-edit" id="general-notes-edit">
+                        <textarea id="general-notes-textarea" placeholder="Enter general notes, observations, or any additional information about your health, medications, or appointments..."></textarea>
+                        <div class="general-notes-actions">
+                            <button class="btn btn-primary" id="save-general-notes-btn">
+                                <i class="fas fa-save"></i> Save Notes
+                            </button>
+                            <button class="btn btn-secondary" id="cancel-general-notes-btn">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-container" style="margin-top: 15px;">
+                    <button class="btn btn-primary" id="add-bp-btn">
+                        <i class="fas fa-plus"></i> Add BP Reading
+                    </button>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>Medical Information App for Kamal Dhunna &copy; <span id="current-year"></span> | All data stored locally in your browser</p>
+        </footer>
+    </div>
+
+    <div id="capture-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-file-medical-alt"></i>
+                    <h2>Complete Medical Information Summary</h2>
+                </div>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="capture-content" id="capture-content">
+            </div>
+            <div class="button-container" style="margin-top: 20px;">
+                <button class="btn btn-primary" id="copy-capture-btn">
+                    <i class="fas fa-copy"></i> Copy to Clipboard
+                </button>
+                <button class="btn btn-secondary" id="print-capture-btn">
+                    <i class="fas fa-print"></i> Print Summary
+                </button>
+                <button class="btn btn-info" id="save-capture-btn">
+                    <i class="fas fa-save"></i> Save as Text File
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="theme-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-palette"></i>
+                    <h2>Theme Selection</h2>
+                </div>
+                <span class="close-modal" data-modal="theme-modal">&times;</span>
+            </div>
+            <div id="theme-selection-content" style="padding: 20px;">
+            </div>
+        </div>
+    </div>
+    
+    <div id="data-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-database"></i>
+                    <h2>Data Management</h2>
+                </div>
+                <span class="close-modal" data-modal="data-modal">&times;</span>
+            </div>
+            <div style="padding: 20px;">
+                <div class="button-container" style="flex-direction: column; gap: 10px;">
+                    <button class="btn btn-secondary" id="modal-backup-data">
+                        <i class="fas fa-download"></i> Backup All Data
+                    </button>
+                    <button class="btn btn-secondary" id="modal-restore-data">
+                        <i class="fas fa-upload"></i> Restore from Backup
+                    </button>
+                    <button class="btn btn-secondary" id="modal-export-all-excel">
+                        <i class="fas fa-file-excel"></i> Export All to Excel (Single Sheet)
+                    </button>
+                    <button class="btn btn-danger" id="modal-clear-all-data">
+                        <i class="fas fa-trash"></i> Clear All Data
+                    </button>
+                </div>
+                <div class="status-message" id="modal-status-message" style="margin-top: 15px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="restore-file" accept=".json" style="display: none;">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        const initializeData = () => {
+            if (!localStorage.getItem('kamal-medicines')) {
+                localStorage.setItem('kamal-medicines', JSON.stringify([]));
+            }
+            
+            if (!localStorage.getItem('kamal-bp-readings')) {
+                localStorage.setItem('kamal-bp-readings', JSON.stringify([]));
+            }
+            
+            if (!localStorage.getItem('kamal-general-notes')) {
+                localStorage.setItem('kamal-general-notes', JSON.stringify({
+                    content: "",
+                    lastUpdated: ""
+                }));
+            }
+            
+            if (!localStorage.getItem('kamal-surgery-details')) {
+                localStorage.setItem('kamal-surgery-details', JSON.stringify({}));
+            }
+            
+            if (!localStorage.getItem('kamal-patient-details')) {
+                localStorage.setItem('kamal-patient-details', JSON.stringify({
+                    name: "Kamal Dhunna",
+                    dob: ""
+                }));
+            }
+            
+            if (!localStorage.getItem('kamal-selected-theme')) {
+                localStorage.setItem('kamal-selected-theme', JSON.stringify({
+                    name: "Green",
+                    color1: "#2ecc71",
+                    color2: "#27ae60",
+                    bg1: "#16222a",
+                    bg2: "#2a3849",
+                    text: "#f0f0f0",
+                    textMuted: "#a0aec0"
+                }));
+            }
+        };
+        
+        initializeData();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            let medicines = JSON.parse(localStorage.getItem('kamal-medicines')) || [];
+            let bpReadings = JSON.parse(localStorage.getItem('kamal-bp-readings')) || [];
+            let generalNotes = JSON.parse(localStorage.getItem('kamal-general-notes')) || {
+                content: "",
+                lastUpdated: ""
+            };
+            let surgeryDetails = JSON.parse(localStorage.getItem('kamal-surgery-details')) || {};
+            let patientDetails = JSON.parse(localStorage.getItem('kamal-patient-details')) || {
+                name: "Kamal Dhunna",
+                dob: ""
+            };
+            
+            let selectedTheme = JSON.parse(localStorage.getItem('kamal-selected-theme')) || {
+                name: "Green",
+                color1: "#2ecc71",
+                color2: "#27ae60",
+                bg1: "#16222a",
+                bg2: "#2a3849",
+                text: "#f0f0f0",
+                textMuted: "#a0aec0"
+            };
+            
+            applyTheme(selectedTheme);
+            initThemeModal();
+            loadSurgeryDetails();
+            loadPatientDetails();
+            loadGeneralNotes();
+            renderMedicines();
+            renderBPReadings();
+            
+            document.getElementById('add-medicine-btn').addEventListener('click', addMedicineRow);
+            document.getElementById('add-bp-btn').addEventListener('click', addBPReadingRow);
+            document.getElementById('save-surgery-btn').addEventListener('click', saveSurgeryDetails);
+            document.getElementById('save-patient-btn').addEventListener('click', savePatientDetails);
+            document.getElementById('edit-general-notes-btn').addEventListener('click', editGeneralNotes);
+            document.getElementById('save-general-notes-btn').addEventListener('click', saveGeneralNotes);
+            document.getElementById('cancel-general-notes-btn').addEventListener('click', cancelEditGeneralNotes);
+            document.getElementById('main-controls-btn').addEventListener('click', toggleMainControlsDropdown);
+            document.getElementById('header-capture-all').addEventListener('click', captureAllDetails);
+            document.getElementById('header-theme-selection').addEventListener('click', showThemeModal);
+            document.getElementById('header-data-management').addEventListener('click', showDataModal);
+            document.getElementById('medicines-dropdown-btn').addEventListener('click', toggleMedicinesDropdown);
+            document.getElementById('bp-dropdown-btn').addEventListener('click', toggleBPDropdown);
+            document.getElementById('surgery-dropdown-btn').addEventListener('click', toggleSurgeryDropdown);
+            document.getElementById('patient-dropdown-btn').addEventListener('click', togglePatientDropdown);
+            document.getElementById('export-medicines-excel').addEventListener('click', exportMedicinesToExcel);
+            document.getElementById('clear-medicines').addEventListener('click', clearMedicines);
+            document.getElementById('export-bp-excel').addEventListener('click', exportBPToExcel);
+            document.getElementById('clear-bp').addEventListener('click', clearBPReadings);
+            document.getElementById('edit-surgery').addEventListener('click', editSurgeryDetails);
+            document.getElementById('delete-surgery').addEventListener('click', deleteSurgeryDetails);
+            document.getElementById('edit-patient').addEventListener('click', editPatientDetails);
+            document.getElementById('delete-patient').addEventListener('click', deletePatientDetails);
+            document.getElementById('restore-file').addEventListener('change', restoreData);
+            document.querySelector('.close-modal').addEventListener('click', closeCaptureModal);
+            document.getElementById('copy-capture-btn').addEventListener('click', copyCaptureToClipboard);
+            document.getElementById('print-capture-btn').addEventListener('click', printCapture);
+            document.getElementById('save-capture-btn').addEventListener('click', saveCaptureAsText);
+            document.querySelector('[data-modal="theme-modal"]').addEventListener('click', () => closeModal('theme-modal'));
+            document.querySelector('[data-modal="data-modal"]').addEventListener('click', () => closeModal('data-modal'));
+            document.getElementById('modal-backup-data').addEventListener('click', backupData);
+            document.getElementById('modal-restore-data').addEventListener('click', () => {
+                document.getElementById('restore-file').click();
+            });
+            document.getElementById('modal-export-all-excel').addEventListener('click', exportAllToExcelSingleSheet);
+            document.getElementById('modal-clear-all-data').addEventListener('click', clearAllData);
+            
+            window.addEventListener('click', function(event) {
+                const modals = ['capture-modal', 'theme-modal', 'data-modal'];
+                modals.forEach(modalId => {
+                    const modal = document.getElementById(modalId);
+                    if (event.target === modal) {
+                        closeModal(modalId);
+                    }
+                });
+            });
+            
+            document.addEventListener('click', function(event) {
+                if (!event.target.matches('.dropdown-btn') && !event.target.matches('.header-dropdown-btn')) {
+                    closeAllDropdowns();
+                }
+            });
+            
+            function addMedicineRow() {
+                const newMedicine = {
+                    id: Date.now(),
+                    name: '',
+                    mg: '',
+                    due: ''
+                };
+                
+                medicines.push(newMedicine);
+                saveMedicines();
+                renderMedicines();
+                showStatus('New medicine row added', 'success');
+            }
+            
+            function addBPReadingRow() {
+                const today = new Date().toISOString().split('T')[0];
+                const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const newReading = {
+                    id: Date.now(),
+                    date: today,
+                    time: time,
+                    systolic: '',
+                    diastolic: '',
+                    pulse: '',
+                    sittingDown: '',
+                    standingUp: '',
+                    ecgMonitor: '',
+                    typeDiagnosis: ''
+                };
+                
+                bpReadings.push(newReading);
+                saveBPReadings();
+                renderBPReadings();
+                showStatus('New BP reading row added', 'success');
+            }
+            
+            function updateMedicine(id, field, value) {
+                const medicine = medicines.find(m => m.id === id);
+                if (medicine) {
+                    medicine[field] = value;
+                    saveMedicines();
+                }
+            }
+            
+            function updateBPReading(id, field, value) {
+                const reading = bpReadings.find(r => r.id === id);
+                if (reading) {
+                    reading[field] = value;
+                    saveBPReadings();
+                }
+            }
+            
+            function deleteMedicine(id) {
+                if (confirm('Delete this medicine?')) {
+                    medicines = medicines.filter(m => m.id !== id);
+                    saveMedicines();
+                    renderMedicines();
+                    showStatus('Medicine deleted', 'success');
+                }
+            }
+            
+            function deleteBPReading(id) {
+                if (confirm('Delete this reading?')) {
+                    bpReadings = bpReadings.filter(r => r.id !== id);
+                    saveBPReadings();
+                    renderBPReadings();
+                    showStatus('BP reading deleted', 'success');
+                }
+            }
+            
+            function saveMedicines() {
+                localStorage.setItem('kamal-medicines', JSON.stringify(medicines));
+            }
+            
+            function saveBPReadings() {
+                localStorage.setItem('kamal-bp-readings', JSON.stringify(bpReadings));
+            }
+            
+            function saveGeneralNotes() {
+                const notesContent = document.getElementById('general-notes-textarea').value;
+                generalNotes = {
+                    content: notesContent,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                loadGeneralNotes();
+                showStatus('General notes saved', 'success');
+            }
+            
+            function loadGeneralNotes() {
+                const displayElement = document.getElementById('general-notes-display');
+                const editElement = document.getElementById('general-notes-edit');
+                const textarea = document.getElementById('general-notes-textarea');
+                
+                if (generalNotes.content) {
+                    displayElement.innerHTML = `<div class="general-notes-display">${generalNotes.content}</div>`;
+                    textarea.value = generalNotes.content;
+                    displayElement.style.display = 'block';
+                    editElement.style.display = 'none';
+                } else {
+                    displayElement.innerHTML = '<div class="general-notes-display" style="color: var(--text-muted); font-style: italic;">No notes added. Click "Edit Notes" to add general notes about your health, medications, appointments, or any observations.</div>';
+                    textarea.value = '';
+                    displayElement.style.display = 'block';
+                    editElement.style.display = 'none';
+                }
+            }
+            
+            function editGeneralNotes() {
+                const displayElement = document.getElementById('general-notes-display');
+                const editElement = document.getElementById('general-notes-edit');
+                
+                displayElement.style.display = 'none';
+                editElement.style.display = 'block';
+                document.getElementById('general-notes-textarea').focus();
+            }
+            
+            function cancelEditGeneralNotes() {
+                loadGeneralNotes();
+            }
+            
+            function saveSurgeryDetails() {
+                surgeryDetails = {
+                    name: document.getElementById('surgery-name').value,
+                    phone: document.getElementById('surgery-phone').value,
+                    address: {
+                        house: document.getElementById('surgery-house').value,
+                        line1: document.getElementById('surgery-line1').value,
+                        line2: document.getElementById('surgery-line2').value,
+                        town: document.getElementById('surgery-town').value,
+                        county: document.getElementById('surgery-county').value,
+                        postcode: document.getElementById('surgery-postcode').value
+                    },
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                loadSurgeryDetails();
+                showStatus('Surgery details saved', 'success');
+                closeAllDropdowns();
+            }
+            
+            function savePatientDetails() {
+                patientDetails = {
+                    name: document.getElementById('patient-name').value,
+                    phone: document.getElementById('patient-phone').value,
+                    nhsNumber: document.getElementById('patient-nhs').value,
+                    hospitalNumber: document.getElementById('patient-hospital').value,
+                    dob: document.getElementById('patient-dob').value,
+                    nextKinName: document.getElementById('patient-next-kin-name').value,
+                    nextKinPhone: document.getElementById('patient-next-kin-phone').value,
+                    address: {
+                        house: document.getElementById('patient-house').value,
+                        line1: document.getElementById('patient-line1').value,
+                        line2: document.getElementById('patient-line2').value,
+                        town: document.getElementById('patient-town').value,
+                        county: document.getElementById('patient-county').value,
+                        postcode: document.getElementById('patient-postcode').value
+                    },
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                loadPatientDetails();
+                showStatus('Patient details saved', 'success');
+                closeAllDropdowns();
+            }
+            
+            function editSurgeryDetails() {
+                document.getElementById('surgery-form').style.display = 'grid';
+                document.querySelector('.address-form').style.display = 'block';
+                document.getElementById('surgery-display').style.display = 'none';
+                document.getElementById('save-surgery-btn').style.display = 'flex';
+                closeAllDropdowns();
+                showStatus('Editing surgery details', 'success');
+            }
+            
+            function deleteSurgeryDetails() {
+                if (confirm('Delete all surgery details? This cannot be undone.')) {
+                    surgeryDetails = {};
+                    localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                    
+                    document.getElementById('surgery-name').value = '';
+                    document.getElementById('surgery-phone').value = '';
+                    document.getElementById('surgery-house').value = '';
+                    document.getElementById('surgery-line1').value = '';
+                    document.getElementById('surgery-line2').value = '';
+                    document.getElementById('surgery-town').value = '';
+                    document.getElementById('surgery-county').value = '';
+                    document.getElementById('surgery-postcode').value = '';
+                    
+                    loadSurgeryDetails();
+                    showStatus('Surgery details deleted', 'success');
+                    closeAllDropdowns();
+                }
+            }
+            
+            function editPatientDetails() {
+                document.getElementById('patient-form').style.display = 'grid';
+                document.querySelectorAll('.address-form')[1].style.display = 'block';
+                document.getElementById('patient-display').style.display = 'none';
+                document.getElementById('save-patient-btn').style.display = 'flex';
+                closeAllDropdowns();
+                showStatus('Editing patient details', 'success');
+            }
+            
+            function deletePatientDetails() {
+                if (confirm('Delete all patient details? This will keep only the name. This cannot be undone.')) {
+                    patientDetails = { 
+                        name: "Kamal Dhunna",
+                        dob: ""
+                    };
+                    localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                    
+                    document.getElementById('patient-phone').value = '';
+                    document.getElementById('patient-nhs').value = '';
+                    document.getElementById('patient-hospital').value = '';
+                    document.getElementById('patient-dob').value = '';
+                    document.getElementById('patient-next-kin-name').value = '';
+                    document.getElementById('patient-next-kin-phone').value = '';
+                    document.getElementById('patient-house').value = '';
+                    document.getElementById('patient-line1').value = '';
+                    document.getElementById('patient-line2').value = '';
+                    document.getElementById('patient-town').value = '';
+                    document.getElementById('patient-county').value = '';
+                    document.getElementById('patient-postcode').value = '';
+                    
+                    loadPatientDetails();
+                    showStatus('Patient details deleted', 'success');
+                    closeAllDropdowns();
+                }
+            }
+            
+            function loadSurgeryDetails() {
+                if (surgeryDetails.name) {
+                    document.getElementById('surgery-name').value = surgeryDetails.name || '';
+                    document.getElementById('surgery-phone').value = surgeryDetails.phone || '';
+                    
+                    if (surgeryDetails.address) {
+                        document.getElementById('surgery-house').value = surgeryDetails.address.house || '';
+                        document.getElementById('surgery-line1').value = surgeryDetails.address.line1 || '';
+                        document.getElementById('surgery-line2').value = surgeryDetails.address.line2 || '';
+                        document.getElementById('surgery-town').value = surgeryDetails.address.town || '';
+                        document.getElementById('surgery-county').value = surgeryDetails.address.county || '';
+                        document.getElementById('surgery-postcode').value = surgeryDetails.address.postcode || '';
+                    }
+                    
+                    const display = document.getElementById('surgery-display');
+                    display.style.display = 'block';
+                    
+                    let displayHTML = `
+                        <div class="info-row">
+                            <div class="info-label">Surgery Name:</div>
+                            <div class="info-value">${surgeryDetails.name}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Phone:</div>
+                            <div class="info-value">${surgeryDetails.phone || 'Not provided'}</div>
+                        </div>
+                    `;
+                    
+                    if (surgeryDetails.address) {
+                        const addr = surgeryDetails.address;
+                        if (addr.house) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">House No/Name:</div>
+                                <div class="info-value">${addr.house}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.line1) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Address Line 1:</div>
+                                <div class="info-value">${addr.line1}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.line2) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Address Line 2:</div>
+                                <div class="info-value">${addr.line2}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.town) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Town/City:</div>
+                                <div class="info-value">${addr.town}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.county) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">County:</div>
+                                <div class="info-value">${addr.county}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.postcode) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Post Code:</div>
+                                <div class="info-value">${addr.postcode}</div>
+                            </div>`;
+                        }
+                    }
+                    
+                    if (surgeryDetails.lastUpdated) {
+                        displayHTML += `<div class="info-row">
+                            <div class="info-label">Last Updated:</div>
+                            <div class="info-value">${new Date(surgeryDetails.lastUpdated).toLocaleDateString()}</div>
+                        </div>`;
+                    }
+                    
+                    displayHTML += `
+                        <div class="profile-display-actions">
+                            <button class="edit-btn" onclick="editSurgeryDetails()">
+                                <i class="fas fa-edit"></i> Edit Details
+                            </button>
+                            <button class="delete-btn" onclick="deleteSurgeryDetails()">
+                                <i class="fas fa-trash"></i> Delete Details
+                            </button>
+                        </div>
+                    `;
+                    
+                    display.innerHTML = displayHTML;
+                    
+                    document.getElementById('surgery-form').style.display = 'none';
+                    document.querySelector('.address-form').style.display = 'none';
+                    document.getElementById('save-surgery-btn').style.display = 'none';
+                } else {
+                    document.getElementById('surgery-form').style.display = 'grid';
+                    document.querySelector('.address-form').style.display = 'block';
+                    document.getElementById('surgery-display').style.display = 'none';
+                    document.getElementById('save-surgery-btn').style.display = 'flex';
+                }
+            }
+            
+            function loadPatientDetails() {
+                if (!patientDetails.name && document.getElementById('patient-name').value === '') {
+                    document.getElementById('patient-name').value = 'Kamal Dhunna';
+                }
+                
+                if (patientDetails.name && (patientDetails.phone || patientDetails.nhsNumber || patientDetails.hospitalNumber || patientDetails.dob || patientDetails.address || patientDetails.nextKinName || patientDetails.nextKinPhone)) {
+                    document.getElementById('patient-name').value = patientDetails.name || '';
+                    document.getElementById('patient-phone').value = patientDetails.phone || '';
+                    document.getElementById('patient-nhs').value = patientDetails.nhsNumber || '';
+                    document.getElementById('patient-hospital').value = patientDetails.hospitalNumber || '';
+                    document.getElementById('patient-dob').value = patientDetails.dob || '';
+                    document.getElementById('patient-next-kin-name').value = patientDetails.nextKinName || '';
+                    document.getElementById('patient-next-kin-phone').value = patientDetails.nextKinPhone || '';
+                    
+                    if (patientDetails.address) {
+                        document.getElementById('patient-house').value = patientDetails.address.house || '';
+                        document.getElementById('patient-line1').value = patientDetails.address.line1 || '';
+                        document.getElementById('patient-line2').value = patientDetails.address.line2 || '';
+                        document.getElementById('patient-town').value = patientDetails.address.town || '';
+                        document.getElementById('patient-county').value = patientDetails.address.county || '';
+                        document.getElementById('patient-postcode').value = patientDetails.address.postcode || '';
+                    }
+                    
+                    const display = document.getElementById('patient-display');
+                    display.style.display = 'block';
+                    
+                    let displayHTML = `
+                        <div class="info-row">
+                            <div class="info-label">Patient Name:</div>
+                            <div class="info-value">${patientDetails.name}</div>
+                        </div>
+                    `;
+                    
+                    if (patientDetails.dob) {
+                        displayHTML += `<div class="info-row">
+                            <div class="info-label">Date of Birth:</div>
+                            <div class="info-value">${new Date(patientDetails.dob).toLocaleDateString()}</div>
+                        </div>`;
+                    }
+                    
+                    displayHTML += `
+                        <div class="info-row">
+                            <div class="info-label">Phone:</div>
+                            <div class="info-value">${patientDetails.phone || 'Not provided'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">NHS Number:</div>
+                            <div class="info-value">${patientDetails.nhsNumber || 'Not provided'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Hospital Number:</div>
+                            <div class="info-value">${patientDetails.hospitalNumber || 'Not provided'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Next of Kin Name:</div>
+                            <div class="info-value">${patientDetails.nextKinName || 'Not provided'}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Next of Kin Phone:</div>
+                            <div class="info-value">${patientDetails.nextKinPhone || 'Not provided'}</div>
+                        </div>
+                    `;
+                    
+                    if (patientDetails.address) {
+                        const addr = patientDetails.address;
+                        if (addr.house) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">House No/Name:</div>
+                                <div class="info-value">${addr.house}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.line1) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Address Line 1:</div>
+                                <div class="info-value">${addr.line1}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.line2) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Address Line 2:</div>
+                                <div class="info-value">${addr.line2}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.town) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Town/City:</div>
+                                <div class="info-value">${addr.town}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.county) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">County:</div>
+                                <div class="info-value">${addr.county}</div>
+                            </div>`;
+                        }
+                        
+                        if (addr.postcode) {
+                            displayHTML += `<div class="info-row">
+                                <div class="info-label">Post Code:</div>
+                                <div class="info-value">${addr.postcode}</div>
+                            </div>`;
+                        }
+                    }
+                    
+                    if (patientDetails.lastUpdated) {
+                        displayHTML += `<div class="info-row">
+                            <div class="info-label">Last Updated:</div>
+                            <div class="info-value">${new Date(patientDetails.lastUpdated).toLocaleDateString()}</div>
+                        </div>`;
+                    }
+                    
+                    displayHTML += `
+                        <div class="profile-display-actions">
+                            <button class="edit-btn" onclick="editPatientDetails()">
+                                <i class="fas fa-edit"></i> Edit Details
+                            </button>
+                            <button class="delete-btn" onclick="deletePatientDetails()">
+                                <i class="fas fa-trash"></i> Delete Details
+                            </button>
+                        </div>
+                    `;
+                    
+                    display.innerHTML = displayHTML;
+                    
+                    document.getElementById('patient-form').style.display = 'none';
+                    document.querySelectorAll('.address-form')[1].style.display = 'none';
+                    document.getElementById('save-patient-btn').style.display = 'none';
+                } else {
+                    document.getElementById('patient-form').style.display = 'grid';
+                    document.querySelectorAll('.address-form')[1].style.display = 'block';
+                    document.getElementById('patient-display').style.display = 'none';
+                    document.getElementById('save-patient-btn').style.display = 'flex';
+                }
+            }
+            
+            function renderMedicines() {
+                const tbody = document.getElementById('medicine-tbody');
+                const noData = document.getElementById('no-medicines');
+                
+                if (medicines.length === 0) {
+                    tbody.innerHTML = '';
+                    noData.style.display = 'block';
+                    return;
+                }
+                
+                noData.style.display = 'none';
+                tbody.innerHTML = '';
+                
+                medicines.forEach(medicine => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td><input type="text" value="${medicine.name}" placeholder="e.g., Metformin" onchange="updateMedicine(${medicine.id}, 'name', this.value)"></td>
+                        <td><input type="text" value="${medicine.mg}" placeholder="e.g., 500mg" onchange="updateMedicine(${medicine.id}, 'mg', this.value)"></td>
+                        <td><input type="text" value="${medicine.due}" placeholder="e.g., Morning, After meals" onchange="updateMedicine(${medicine.id}, 'due', this.value)"></td>
+                        <td><button class="delete-btn" onclick="deleteMedicine(${medicine.id})"><i class="fas fa-trash"></i> Delete</button></td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+            }
+            
+            function renderBPReadings() {
+                const tbody = document.getElementById('bp-tbody');
+                const noData = document.getElementById('no-bp');
+                
+                if (bpReadings.length === 0) {
+                    tbody.innerHTML = '';
+                    noData.style.display = 'block';
+                    return;
+                }
+                
+                noData.style.display = 'none';
+                tbody.innerHTML = '';
+                
+                bpReadings.sort((a, b) => {
+                    const dateCompare = new Date(b.date) - new Date(a.date);
+                    if (dateCompare !== 0) return dateCompare;
+                    return b.id - a.id;
+                });
+                
+                bpReadings.forEach(reading => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td><input type="date" value="${reading.date}" onchange="updateBPReading(${reading.id}, 'date', this.value)"></td>
+                        <td><input type="time" value="${reading.time}" onchange="updateBPReading(${reading.id}, 'time', this.value)"></td>
+                        <td><input type="number" value="${reading.systolic}" placeholder="e.g., 120" onchange="updateBPReading(${reading.id}, 'systolic', this.value)"></td>
+                        <td><input type="number" value="${reading.diastolic}" placeholder="e.g., 80" onchange="updateBPReading(${reading.id}, 'diastolic', this.value)"></td>
+                        <td><input type="number" value="${reading.pulse}" placeholder="e.g., 72" onchange="updateBPReading(${reading.id}, 'pulse', this.value)"></td>
+                        <td><input type="text" value="${reading.sittingDown}" placeholder="e.g., 120/80" onchange="updateBPReading(${reading.id}, 'sittingDown', this.value)"></td>
+                        <td><input type="text" value="${reading.standingUp}" placeholder="e.g., 118/78" onchange="updateBPReading(${reading.id}, 'standingUp', this.value)"></td>
+                        <td><input type="text" value="${reading.ecgMonitor}" placeholder="ECG notes" onchange="updateBPReading(${reading.id}, 'ecgMonitor', this.value)"></td>
+                        <td><input type="text" value="${reading.typeDiagnosis}" placeholder="Diagnosis type" onchange="updateBPReading(${reading.id}, 'typeDiagnosis', this.value)"></td>
+                        <td><button class="delete-btn" onclick="deleteBPReading(${reading.id})"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+            }
+            
+            function initThemeModal() {
+                const themes = [
+                    {
+                        name: "Green",
+                        color1: "#2ecc71",
+                        color2: "#27ae60",
+                        bg1: "#16222a",
+                        bg2: "#2a3849",
+                        text: "#f0f0f0",
+                        textMuted: "#a0aec0"
+                    },
+                    {
+                        name: "Blue",
+                        color1: "#3498db",
+                        color2: "#2980b9",
+                        bg1: "#0f1c2e",
+                        bg2: "#1f2d3d",
+                        text: "#e3f2fd",
+                        textMuted: "#90caf9"
+                    },
+                    {
+                        name: "Purple",
+                        color1: "#9b59b6",
+                        color2: "#8e44ad",
+                        bg1: "#1a1a2e",
+                        bg2: "#2a2a3e",
+                        text: "#f3e5f5",
+                        textMuted: "#ce93d8"
+                    },
+                    {
+                        name: "Teal",
+                        color1: "#1abc9c",
+                        color2: "#16a085",
+                        bg1: "#0d2429",
+                        bg2: "#1d3439",
+                        text: "#e0f2f1",
+                        textMuted: "#80cbc4"
+                    },
+                    {
+                        name: "Red",
+                        color1: "#e74c3c",
+                        color2: "#c0392b",
+                        bg1: "#2c0f0f",
+                        bg2: "#3c1f1f",
+                        text: "#ffebee",
+                        textMuted: "#ef9a9a"
+                    },
+                    {
+                        name: "Orange",
+                        color1: "#e67e22",
+                        color2: "#d35400",
+                        bg1: "#2a1a0a",
+                        bg2: "#3a2a1a",
+                        text: "#fff3e0",
+                        textMuted: "#ffcc80"
+                    },
+                    {
+                        name: "Yellow",
+                        color1: "#f1c40f",
+                        color2: "#f39c12",
+                        bg1: "#2a240a",
+                        bg2: "#3a341a",
+                        text: "#fffde7",
+                        textMuted: "#fff59d"
+                    },
+                    {
+                        name: "Pink",
+                        color1: "#fd79a8",
+                        color2: "#e84393",
+                        bg1: "#2a0f1a",
+                        bg2: "#3a1f2a",
+                        text: "#fce4ec",
+                        textMuted: "#f48fb1"
+                    },
+                    {
+                        name: "Cyan",
+                        color1: "#00cec9",
+                        color2: "#00b894",
+                        bg1: "#0a242a",
+                        bg2: "#1a343a",
+                        text: "#e0f7fa",
+                        textMuted: "#80deea"
+                    },
+                    {
+                        name: "Slate",
+                        color1: "#636e72",
+                        color2: "#2d3436",
+                        bg1: "#1a1a1a",
+                        bg2: "#2a2a2a",
+                        text: "#f5f5f5",
+                        textMuted: "#bdbdbd"
+                    }
+                ];
+                
+                const container = document.getElementById('theme-selection-content');
+                container.innerHTML = '<p style="margin-bottom: 15px; color: var(--text-muted);">Select a theme to change the appearance of the application:</p>';
+                
+                const themeGrid = document.createElement('div');
+                themeGrid.style.display = 'grid';
+                themeGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
+                themeGrid.style.gap = '10px';
+                themeGrid.style.marginTop = '15px';
+                
+                themes.forEach(theme => {
+                    const themeCard = document.createElement('div');
+                    themeCard.className = 'theme-card';
+                    themeCard.style.padding = '15px';
+                    themeCard.style.borderRadius = '6px';
+                    themeCard.style.background = 'linear-gradient(145deg, var(--secondary-dark) 0%, color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-1) 10%) 100%)';
+                    themeCard.style.border = `2px solid ${theme.name === selectedTheme.name ? theme.color1 : 'transparent'}`;
+                    themeCard.style.cursor = 'pointer';
+                    themeCard.style.transition = 'all 0.3s';
+                    
+                    themeCard.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="width: 30px; height: 30px; border-radius: 4px; background: linear-gradient(to right, ${theme.color1}, ${theme.color2}); border: 1px solid rgba(255, 255, 255, 0.2);"></div>
+                            <span style="font-weight: 600; color: var(--text-light);">${theme.name}</span>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <div style="width: 20px; height: 20px; border-radius: 3px; background: ${theme.color1};"></div>
+                            <div style="width: 20px; height: 20px; border-radius: 3px; background: ${theme.color2};"></div>
+                            <div style="width: 20px; height: 20px; border-radius: 3px; background: ${theme.bg1};"></div>
+                            <div style="width: 20px; height: 20px; border-radius: 3px; background: ${theme.bg2};"></div>
+                        </div>
+                    `;
+                    
+                    themeCard.addEventListener('click', () => {
+                        selectedTheme = theme;
+                        localStorage.setItem('kamal-selected-theme', JSON.stringify(theme));
+                        applyTheme(theme);
+                        closeModal('theme-modal');
+                        showStatus(`Theme changed to ${theme.name}`, 'success');
+                        
+                        document.querySelectorAll('.theme-card').forEach(card => {
+                            card.style.border = '2px solid transparent';
+                        });
+                        themeCard.style.border = `2px solid ${theme.color1}`;
+                    });
+                    
+                    themeGrid.appendChild(themeCard);
+                });
+                
+                container.appendChild(themeGrid);
+                
+                const currentThemeInfo = document.createElement('div');
+                currentThemeInfo.style.marginTop = '20px';
+                currentThemeInfo.style.padding = '15px';
+                currentThemeInfo.style.borderRadius = '6px';
+                currentThemeInfo.style.background = 'linear-gradient(145deg, color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-1) 5%), color-mix(in srgb, var(--secondary-dark) 90%, var(--accent-color-2) 5%))';
+                currentThemeInfo.style.border = '1px solid var(--border-color)';
+                currentThemeInfo.innerHTML = `
+                    <div style="font-weight: 600; color: var(--accent-color-1); margin-bottom: 5px;">Current Theme: ${selectedTheme.name}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">The theme affects all colors and visual elements of the application.</div>
+                `;
+                
+                container.appendChild(currentThemeInfo);
+            }
+            
+            function applyTheme(theme) {
+                document.documentElement.style.setProperty('--accent-color-1', theme.color1);
+                document.documentElement.style.setProperty('--accent-color-2', theme.color2);
+                document.documentElement.style.setProperty('--primary-dark', theme.bg1);
+                document.documentElement.style.setProperty('--secondary-dark', theme.bg2);
+                document.documentElement.style.setProperty('--text-light', theme.text);
+                document.documentElement.style.setProperty('--text-muted', theme.textMuted);
+                document.documentElement.style.setProperty('--border-color', colorMix(theme.bg2, theme.color1, 30));
+            }
+            
+            function colorMix(baseColor, mixColor, percentage) {
+                const base = hexToRgb(baseColor);
+                const mix = hexToRgb(mixColor);
+                const p = percentage / 100;
+                
+                const r = Math.round(base.r * (1-p) + mix.r * p);
+                const g = Math.round(base.g * (1-p) + mix.g * p);
+                const b = Math.round(base.b * (1-p) + mix.b * p);
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : {r: 0, g: 0, b: 0};
+            }
+            
+            function captureAllDetails() {
+                let captureText = "=".repeat(80) + "\n";
+                captureText += "COMPLETE MEDICAL INFORMATION SUMMARY - KAMAL DHUNNA\n";
+                captureText += "=".repeat(80) + "\n\n";
+                captureText += `Generated: ${new Date().toLocaleString()}\n\n`;
+                
+                captureText += "PATIENT DETAILS\n";
+                captureText += "-".repeat(40) + "\n";
+                captureText += `Name: ${patientDetails.name || "Not provided"}\n`;
+                captureText += `Date of Birth: ${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString() : "Not provided"}\n`;
+                captureText += `Phone: ${patientDetails.phone || "Not provided"}\n`;
+                captureText += `NHS Number: ${patientDetails.nhsNumber || "Not provided"}\n`;
+                captureText += `Hospital Number: ${patientDetails.hospitalNumber || "Not provided"}\n`;
+                captureText += `Next of Kin Name: ${patientDetails.nextKinName || "Not provided"}\n`;
+                captureText += `Next of Kin Phone: ${patientDetails.nextKinPhone || "Not provided"}\n`;
+                
+                if (patientDetails.address) {
+                    const addr = patientDetails.address;
+                    captureText += "\nPATIENT ADDRESS:\n";
+                    if (addr.house) captureText += `House No/Name: ${addr.house}\n`;
+                    if (addr.line1) captureText += `Address Line 1: ${addr.line1}\n`;
+                    if (addr.line2) captureText += `Address Line 2: ${addr.line2}\n`;
+                    if (addr.town) captureText += `Town/City: ${addr.town}\n`;
+                    if (addr.county) captureText += `County: ${addr.county}\n`;
+                    if (addr.postcode) captureText += `Post Code: ${addr.postcode}\n`;
+                }
+                
+                captureText += "\n" + "-".repeat(40) + "\n";
+                captureText += "SURGERY/CLINIC DETAILS\n";
+                captureText += "-".repeat(40) + "\n";
+                captureText += `Surgery Name: ${surgeryDetails.name || "Not provided"}\n`;
+                captureText += `Phone: ${surgeryDetails.phone || "Not provided"}\n`;
+                
+                if (surgeryDetails.address) {
+                    const addr = surgeryDetails.address;
+                    captureText += "\nSURGERY ADDRESS:\n";
+                    if (addr.house) captureText += `House No/Name: ${addr.house}\n`;
+                    if (addr.line1) captureText += `Address Line 1: ${addr.line1}\n`;
+                    if (addr.line2) captureText += `Address Line 2: ${addr.line2}\n`;
+                    if (addr.town) captureText += `Town/City: ${addr.town}\n`;
+                    if (addr.county) captureText += `County: ${addr.county}\n`;
+                    if (addr.postcode) captureText += `Post Code: ${addr.postcode}\n`;
+                }
+                
+                captureText += "\n" + "-".repeat(40) + "\n";
+                captureText += "MEDICATION LIST\n";
+                captureText += "-".repeat(40) + "\n";
+                if (medicines.length > 0) {
+                    medicines.forEach((med, index) => {
+                        captureText += `${index + 1}. ${med.name || "Unnamed Medicine"} - ${med.mg || "No dosage"} - ${med.due || "No due time"}\n`;
+                    });
+                    captureText += `\nTotal Medicines: ${medicines.length}\n`;
+                } else {
+                    captureText += "No medicines recorded.\n";
+                }
+                
+                captureText += "\n" + "-".repeat(40) + "\n";
+                captureText += "BLOOD PRESSURE & ECG READINGS\n";
+                captureText += "-".repeat(40) + "\n";
+                if (bpReadings.length > 0) {
+                    const sortedReadings = [...bpReadings].sort((a, b) => {
+                        const dateCompare = new Date(b.date) - new Date(a.date);
+                        if (dateCompare !== 0) return dateCompare;
+                        return b.id - a.id;
+                    });
+                    
+                    captureText += "DATE       TIME     SYSTOLIC DIASTOLIC PULSE SITTING DOWN STANDING UP ECG MONITOR       TYPE DIAGNOSIS\n";
+                    captureText += "---------- -------- -------- --------- ----- ----------- ----------- ----------------  --------------\n";
+                    
+                    sortedReadings.forEach((reading) => {
+                        const date = reading.date || "";
+                        const time = reading.time || "";
+                        const systolic = reading.systolic || "N/A";
+                        const diastolic = reading.diastolic || "N/A";
+                        const pulse = reading.pulse || "N/A";
+                        const sittingDown = reading.sittingDown || "N/A";
+                        const standingUp = reading.standingUp || "N/A";
+                        const ecgMonitor = reading.ecgMonitor || "N/A";
+                        const typeDiagnosis = reading.typeDiagnosis || "N/A";
+                        
+                        captureText += `${date.padEnd(10)} ${time.padEnd(8)} ${systolic.toString().padEnd(8)} ${diastolic.toString().padEnd(9)} ${pulse.toString().padEnd(5)} ${sittingDown.padEnd(11)} ${standingUp.padEnd(11)} ${ecgMonitor.padEnd(16)} ${typeDiagnosis}\n`;
+                    });
+                    captureText += `\nTotal BP Readings: ${bpReadings.length}\n`;
+                } else {
+                    captureText += "No blood pressure readings recorded.\n";
+                }
+                
+                captureText += "\n" + "-".repeat(40) + "\n";
+                captureText += "GENERAL NOTES\n";
+                captureText += "-".repeat(40) + "\n";
+                if (generalNotes.content) {
+                    captureText += generalNotes.content + "\n";
+                    if (generalNotes.lastUpdated) {
+                        captureText += `\nLast Updated: ${new Date(generalNotes.lastUpdated).toLocaleString()}\n`;
+                    }
+                } else {
+                    captureText += "No general notes recorded.\n";
+                }
+                
+                captureText += "\n" + "=".repeat(80) + "\n";
+                captureText += "SUMMARY\n";
+                captureText += "=".repeat(80) + "\n";
+                captureText += `Patient: ${patientDetails.name || "Not specified"}\n`;
+                captureText += `Surgery/Clinic: ${surgeryDetails.name || "Not specified"}\n`;
+                captureText += `Medicines Count: ${medicines.length}\n`;
+                captureText += `BP Readings Count: ${bpReadings.length}\n`;
+                captureText += `Has General Notes: ${generalNotes.content ? "Yes" : "No"}\n`;
+                captureText += `Last Updated: ${new Date().toLocaleString()}\n`;
+                
+                document.getElementById('capture-content').textContent = captureText;
+                closeAllDropdowns();
+                document.getElementById('capture-modal').style.display = 'block';
+            }
+            
+            function closeCaptureModal() {
+                document.getElementById('capture-modal').style.display = 'none';
+            }
+            
+            function showThemeModal() {
+                closeAllDropdowns();
+                document.getElementById('theme-modal').style.display = 'block';
+            }
+            
+            function showDataModal() {
+                closeAllDropdowns();
+                document.getElementById('data-modal').style.display = 'block';
+            }
+            
+            function closeModal(modalId) {
+                document.getElementById(modalId).style.display = 'none';
+            }
+            
+            function copyCaptureToClipboard() {
+                const captureText = document.getElementById('capture-content').textContent;
+                navigator.clipboard.writeText(captureText).then(() => {
+                    showStatus('Summary copied to clipboard!', 'success');
+                }).catch(err => {
+                    showStatus('Failed to copy to clipboard', 'error');
+                    console.error('Copy failed: ', err);
+                });
+            }
+            
+            function printCapture() {
+                const captureText = document.getElementById('capture-content').textContent;
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Medical Information Summary - Kamal Dhunna</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+                            pre { white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; }
+                            h1 { color: #2ecc71; border-bottom: 2px solid #2ecc71; padding-bottom: 10px; }
+                            .summary-header { text-align: center; margin-bottom: 30px; }
+                            @media print {
+                                body { font-size: 12pt; }
+                                .no-print { display: none; }
+                                pre { font-size: 10pt; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="summary-header">
+                            <h1>Medical Information Summary</h1>
+                            <p>Kamal Dhunna - Personal Health Tracker</p>
+                            <p>Generated: ${new Date().toLocaleString()}</p>
+                        </div>
+                        <pre>${captureText}</pre>
+                        <div class="no-print" style="margin-top: 30px; text-align: center;">
+                            <button onclick="window.print()" style="padding: 10px 20px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Print Summary
+                            </button>
+                            <button onclick="window.close()" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                                Close Window
+                            </button>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.focus();
+            }
+            
+            function saveCaptureAsText() {
+                const captureText = document.getElementById('capture-content').textContent;
+                const dataBlob = new Blob([captureText], {type: 'text/plain'});
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `kamal-medical-summary-${new Date().toISOString().slice(0, 10)}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showStatus('Summary saved as text file!', 'success');
+            }
+            
+            function backupData() {
+                const data = {
+                    medicines: medicines,
+                    bpReadings: bpReadings,
+                    generalNotes: generalNotes,
+                    surgeryDetails: surgeryDetails,
+                    patientDetails: patientDetails,
+                    selectedTheme: selectedTheme,
+                    backupDate: new Date().toISOString()
+                };
+                
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `kamal-medical-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showStatus('Backup created successfully!', 'success');
+                closeModal('data-modal');
+            }
+            
+            function exportAllToExcelSingleSheet() {
+                if (medicines.length === 0 && bpReadings.length === 0 && !surgeryDetails.name && !patientDetails.name) {
+                    showStatus('No data to export', 'error');
+                    return;
+                }
+                
+                const wb = XLSX.utils.book_new();
+                const allData = [];
+                
+                allData.push(["COMPLETE MEDICAL INFORMATION REPORT - KAMAL DHUNNA"]);
+                allData.push([`Generated: ${new Date().toLocaleString()}`]);
+                allData.push([""]);
+                
+                allData.push(["PATIENT DETAILS"]);
+                allData.push(["Field", "Value"]);
+                allData.push(["Patient Name", patientDetails.name || ""]);
+                allData.push(["Date of Birth", patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString() : ""]);
+                allData.push(["Phone", patientDetails.phone || ""]);
+                allData.push(["NHS Number", patientDetails.nhsNumber || ""]);
+                allData.push(["Hospital Number", patientDetails.hospitalNumber || ""]);
+                allData.push(["Next of Kin Name", patientDetails.nextKinName || ""]);
+                allData.push(["Next of Kin Phone", patientDetails.nextKinPhone || ""]);
+                allData.push([""]);
+                
+                if (patientDetails.address && (patientDetails.address.house || patientDetails.address.line1 || patientDetails.address.town)) {
+                    allData.push(["PATIENT ADDRESS"]);
+                    allData.push(["Address Line", "Value"]);
+                    allData.push(["House No/Name", patientDetails.address.house || ""]);
+                    allData.push(["Address Line 1", patientDetails.address.line1 || ""]);
+                    allData.push(["Address Line 2", patientDetails.address.line2 || ""]);
+                    allData.push(["Town/City", patientDetails.address.town || ""]);
+                    allData.push(["County", patientDetails.address.county || ""]);
+                    allData.push(["Post Code", patientDetails.address.postcode || ""]);
+                    allData.push([""]);
+                }
+                
+                allData.push(["SURGERY/CLINIC DETAILS"]);
+                allData.push(["Field", "Value"]);
+                allData.push(["Surgery Name", surgeryDetails.name || ""]);
+                allData.push(["Phone", surgeryDetails.phone || ""]);
+                allData.push([""]);
+                
+                if (surgeryDetails.address && (surgeryDetails.address.house || surgeryDetails.address.line1 || surgeryDetails.address.town)) {
+                    allData.push(["SURGERY ADDRESS"]);
+                    allData.push(["Address Line", "Value"]);
+                    allData.push(["House No/Name", surgeryDetails.address.house || ""]);
+                    allData.push(["Address Line 1", surgeryDetails.address.line1 || ""]);
+                    allData.push(["Address Line 2", surgeryDetails.address.line2 || ""]);
+                    allData.push(["Town/City", surgeryDetails.address.town || ""]);
+                    allData.push(["County", surgeryDetails.address.county || ""]);
+                    allData.push(["Post Code", surgeryDetails.address.postcode || ""]);
+                    allData.push([""]);
+                }
+                
+                if (medicines.length > 0) {
+                    allData.push(["MEDICATION LIST"]);
+                    allData.push(["Medicine Name", "Dosage (mg)", "Due Time / Frequency"]);
+                    
+                    medicines.forEach((med) => {
+                        allData.push([
+                            med.name || "",
+                            med.mg || "",
+                            med.due || ""
+                        ]);
+                    });
+                    
+                    allData.push([`Total Medicines: ${medicines.length}`]);
+                    allData.push([""]);
+                }
+                
+                if (bpReadings.length > 0) {
+                    allData.push(["BLOOD PRESSURE & ECG READINGS"]);
+                    allData.push([
+                        "Date", 
+                        "Time", 
+                        "Systolic", 
+                        "Diastolic", 
+                        "Pulse", 
+                        "Sitting Down",
+                        "Standing Up",
+                        "ECG Monitor",
+                        "Type Diagnosis"
+                    ]);
+                    
+                    const sortedReadings = [...bpReadings].sort((a, b) => {
+                        const dateCompare = new Date(b.date) - new Date(a.date);
+                        if (dateCompare !== 0) return dateCompare;
+                        return b.id - a.id;
+                    });
+                    
+                    sortedReadings.forEach(reading => {
+                        allData.push([
+                            reading.date || "",
+                            reading.time || "",
+                            reading.systolic || "",
+                            reading.diastolic || "",
+                            reading.pulse || "",
+                            reading.sittingDown || "",
+                            reading.standingUp || "",
+                            reading.ecgMonitor || "",
+                            reading.typeDiagnosis || ""
+                        ]);
+                    });
+                    
+                    allData.push([`Total BP Readings: ${bpReadings.length}`]);
+                    allData.push([""]);
+                }
+                
+                if (generalNotes.content) {
+                    allData.push(["GENERAL NOTES"]);
+                    allData.push(["Content:"]);
+                    
+                    const notesLines = generalNotes.content.split('\n');
+                    notesLines.forEach(line => {
+                        allData.push([line]);
+                    });
+                    
+                    if (generalNotes.lastUpdated) {
+                        allData.push([""]);
+                        allData.push(["Last Updated:", new Date(generalNotes.lastUpdated).toLocaleString()]);
+                    }
+                    allData.push([""]);
+                }
+                
+                allData.push(["SUMMARY"]);
+                allData.push(["Item", "Value"]);
+                allData.push(["Patient", patientDetails.name || "Not specified"]);
+                allData.push(["Surgery/Clinic", surgeryDetails.name || "Not specified"]);
+                allData.push(["Medicines Count", medicines.length]);
+                allData.push(["BP Readings Count", bpReadings.length]);
+                allData.push(["Has General Notes", generalNotes.content ? "Yes" : "No"]);
+                allData.push(["Report Generated", new Date().toLocaleString()]);
+                allData.push([""]);
+                allData.push(["End of Report"]);
+                
+                const ws = XLSX.utils.aoa_to_sheet(allData);
+                
+                const wscols = [
+                    {wch: 25},
+                    {wch: 30},
+                    {wch: 20},
+                    {wch: 15},
+                    {wch: 15},
+                    {wch: 15},
+                    {wch: 15},
+                    {wch: 20},
+                    {wch: 20}
+                ];
+                ws['!cols'] = wscols;
+                
+                XLSX.utils.book_append_sheet(wb, ws, "Medical Report");
+                
+                const fileName = `kamal-medical-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showStatus('Excel report exported successfully!', 'success');
+                closeModal('data-modal');
+            }
+            
+            function exportMedicinesToExcel() {
+                if (medicines.length === 0) {
+                    showStatus('No medicines to export', 'error');
+                    return;
+                }
+                
+                const wb = XLSX.utils.book_new();
+                
+                const header = [["Medicine Name", "Dosage (mg)", "Due Time / Frequency"]];
+                const medicineData = medicines.map(m => [m.name || '', m.mg || '', m.due || '']);
+                const allData = header.concat(medicineData);
+                
+                const medicineWs = XLSX.utils.aoa_to_sheet(allData);
+                
+                const wscols = [
+                    {wch: 30},
+                    {wch: 15},
+                    {wch: 25}
+                ];
+                medicineWs['!cols'] = wscols;
+                
+                XLSX.utils.book_append_sheet(wb, medicineWs, 'Medicines');
+                
+                const fileName = `kamal-medicines-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showStatus('Medicines exported to Excel!', 'success');
+                closeAllDropdowns();
+            }
+            
+            function exportBPToExcel() {
+                if (bpReadings.length === 0) {
+                    showStatus('No BP readings to export', 'error');
+                    return;
+                }
+                
+                const wb = XLSX.utils.book_new();
+                
+                const header = [["Date", "Time", "Systolic", "Diastolic", "Pulse", "Sitting Down", "Standing Up", "ECG Monitor", "Type Diagnosis"]];
+                const bpData = bpReadings.map(r => [
+                    r.date || '',
+                    r.time || '',
+                    r.systolic || '',
+                    r.diastolic || '',
+                    r.pulse || '',
+                    r.sittingDown || '',
+                    r.standingUp || '',
+                    r.ecgMonitor || '',
+                    r.typeDiagnosis || ''
+                ]);
+                
+                const sortedData = bpData.sort((a, b) => {
+                    const dateCompare = new Date(b[0]) - new Date(a[0]);
+                    if (dateCompare !== 0) return dateCompare;
+                    return b[1] - a[1];
+                });
+                
+                const allData = header.concat(sortedData);
+                const bpWs = XLSX.utils.aoa_to_sheet(allData);
+                
+                const wscols = [
+                    {wch: 12},
+                    {wch: 10},
+                    {wch: 10},
+                    {wch: 10},
+                    {wch: 8},
+                    {wch: 15},
+                    {wch: 15},
+                    {wch: 20},
+                    {wch: 20}
+                ];
+                bpWs['!cols'] = wscols;
+                
+                XLSX.utils.book_append_sheet(wb, bpWs, 'Blood Pressure');
+                
+                const fileName = `kamal-bp-readings-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+                
+                showStatus('BP readings exported to Excel!', 'success');
+                closeAllDropdowns();
+            }
+            
+            function restoreData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (data.medicines && data.bpReadings) {
+                            medicines = data.medicines;
+                            bpReadings = data.bpReadings;
+                            
+                            if (data.generalNotes) {
+                                generalNotes = data.generalNotes;
+                                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                            } else if (data.bpNotes) {
+                                generalNotes = data.bpNotes;
+                                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                            }
+                            
+                            if (data.surgeryDetails) {
+                                surgeryDetails = data.surgeryDetails;
+                                localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                            }
+                            
+                            if (data.patientDetails) {
+                                patientDetails = data.patientDetails;
+                                localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                            }
+                            
+                            if (data.selectedTheme) {
+                                selectedTheme = data.selectedTheme;
+                                localStorage.setItem('kamal-selected-theme', JSON.stringify(selectedTheme));
+                                applyTheme(selectedTheme);
+                                initThemeModal();
+                            }
+                            
+                            saveMedicines();
+                            saveBPReadings();
+                            loadSurgeryDetails();
+                            loadPatientDetails();
+                            loadGeneralNotes();
+                            renderMedicines();
+                            renderBPReadings();
+                            
+                            showStatus('Data restored successfully!', 'success');
+                        } else {
+                            showStatus('Invalid backup file', 'error');
+                        }
+                    } catch (error) {
+                        showStatus('Error reading backup file', 'error');
+                        console.error(error);
+                    }
+                    
+                    event.target.value = '';
+                    closeModal('data-modal');
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            function clearAllData() {
+                if (confirm('Clear ALL data? This includes medicines, BP readings, general notes, and profile details. This cannot be undone.')) {
+                    medicines = [];
+                    bpReadings = [];
+                    generalNotes = {
+                        content: "",
+                        lastUpdated: ""
+                    };
+                    surgeryDetails = {};
+                    patientDetails = { 
+                        name: "Kamal Dhunna",
+                        dob: ""
+                    };
+                    
+                    localStorage.setItem('kamal-medicines', JSON.stringify(medicines));
+                    localStorage.setItem('kamal-bp-readings', JSON.stringify(bpReadings));
+                    localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                    localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                    localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                    
+                    document.getElementById('surgery-name').value = '';
+                    document.getElementById('surgery-phone').value = '';
+                    document.getElementById('surgery-house').value = '';
+                    document.getElementById('surgery-line1').value = '';
+                    document.getElementById('surgery-line2').value = '';
+                    document.getElementById('surgery-town').value = '';
+                    document.getElementById('surgery-county').value = '';
+                    document.getElementById('surgery-postcode').value = '';
+                    
+                    document.getElementById('patient-phone').value = '';
+                    document.getElementById('patient-nhs').value = '';
+                    document.getElementById('patient-hospital').value = '';
+                    document.getElementById('patient-dob').value = '';
+                    document.getElementById('patient-next-kin-name').value = '';
+                    document.getElementById('patient-next-kin-phone').value = '';
+                    document.getElementById('patient-house').value = '';
+                    document.getElementById('patient-line1').value = '';
+                    document.getElementById('patient-line2').value = '';
+                    document.getElementById('patient-town').value = '';
+                    document.getElementById('patient-county').value = '';
+                    document.getElementById('patient-postcode').value = '';
+                    
+                    document.getElementById('general-notes-textarea').value = '';
+                    
+                    loadSurgeryDetails();
+                    loadPatientDetails();
+                    loadGeneralNotes();
+                    renderMedicines();
+                    renderBPReadings();
+                    
+                    showStatus('All data cleared', 'success');
+                    closeModal('data-modal');
+                }
+            }
+            
+            function clearMedicines() {
+                if (confirm('Clear all medicines? This cannot be undone.')) {
+                    medicines = [];
+                    saveMedicines();
+                    renderMedicines();
+                    showStatus('All medicines cleared', 'success');
+                    closeAllDropdowns();
+                }
+            }
+            
+            function clearBPReadings() {
+                if (confirm('Clear all BP readings? This cannot be undone.')) {
+                    bpReadings = [];
+                    saveBPReadings();
+                    renderBPReadings();
+                    showStatus('All BP readings cleared', 'success');
+                    closeAllDropdowns();
+                }
+            }
+            
+            function showStatus(message, type) {
+                const statusEl = document.getElementById('modal-status-message');
+                statusEl.textContent = message;
+                statusEl.className = `status-message status-${type}`;
+                statusEl.style.display = 'flex';
+                
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 4000);
+            }
+            
+            function toggleMainControlsDropdown() {
+                const dropdown = document.getElementById('main-controls-dropdown');
+                dropdown.classList.toggle('show');
+                closeOtherDropdowns('main-controls-dropdown');
+            }
+            
+            function toggleMedicinesDropdown() {
+                const dropdown = document.getElementById('medicines-dropdown');
+                dropdown.classList.toggle('show');
+                closeOtherDropdowns('medicines-dropdown');
+            }
+            
+            function toggleBPDropdown() {
+                const dropdown = document.getElementById('bp-dropdown');
+                dropdown.classList.toggle('show');
+                closeOtherDropdowns('bp-dropdown');
+            }
+            
+            function toggleSurgeryDropdown() {
+                const dropdown = document.getElementById('surgery-dropdown');
+                dropdown.classList.toggle('show');
+                closeOtherDropdowns('surgery-dropdown');
+            }
+            
+            function togglePatientDropdown() {
+                const dropdown = document.getElementById('patient-dropdown');
+                dropdown.classList.toggle('show');
+                closeOtherDropdowns('patient-dropdown');
+            }
+            
+            function closeAllDropdowns() {
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+                document.querySelectorAll('.header-dropdown-content').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+            }
+            
+            function closeOtherDropdowns(exceptId) {
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                    if (dropdown.id !== exceptId) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+                document.querySelectorAll('.header-dropdown-content').forEach(dropdown => {
+                    if (dropdown.id !== exceptId) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            }
+            
+            window.updateMedicine = updateMedicine;
+            window.updateBPReading = updateBPReading;
+            window.deleteMedicine = deleteMedicine;
+            window.deleteBPReading = deleteBPReading;
+            window.editSurgeryDetails = editSurgeryDetails;
+            window.deleteSurgeryDetails = deleteSurgeryDetails;
+            window.editPatientDetails = editPatientDetails;
+            window.deletePatientDetails = deletePatientDetails;
+        });
+    </script>
+</body>
+</html>
