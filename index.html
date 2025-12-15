@@ -1069,6 +1069,12 @@
                 </div>
                 
                 <div class="form-grid" id="surgery-form">
+                    <!-- NEW FIELD: Doctor's Name -->
+                    <div class="form-group full-width">
+                        <label for="surgery-doctor">Doctor's Name</label>
+                        <input type="text" id="surgery-doctor" placeholder="Enter doctor's full name">
+                    </div>
+                    
                     <div class="form-group full-width">
                         <label for="surgery-name">Surgery/Clinic Name</label>
                         <input type="text" id="surgery-name" placeholder="Enter surgery or clinic name">
@@ -1684,6 +1690,7 @@
             
             function saveSurgeryDetails() {
                 surgeryDetails = {
+                    doctorName: document.getElementById('surgery-doctor').value,
                     name: document.getElementById('surgery-name').value,
                     phone: document.getElementById('surgery-phone').value,
                     address: {
@@ -1743,6 +1750,7 @@
                     surgeryDetails = {};
                     localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
                     
+                    document.getElementById('surgery-doctor').value = '';
                     document.getElementById('surgery-name').value = '';
                     document.getElementById('surgery-phone').value = '';
                     document.getElementById('surgery-house').value = '';
@@ -1795,7 +1803,8 @@
             }
             
             function loadSurgeryDetails() {
-                if (surgeryDetails.name) {
+                if (surgeryDetails.name || surgeryDetails.doctorName) {
+                    document.getElementById('surgery-doctor').value = surgeryDetails.doctorName || '';
                     document.getElementById('surgery-name').value = surgeryDetails.name || '';
                     document.getElementById('surgery-phone').value = surgeryDetails.phone || '';
                     
@@ -1811,11 +1820,27 @@
                     const display = document.getElementById('surgery-display');
                     display.style.display = 'block';
                     
-                    let displayHTML = `
-                        <div class="info-row">
-                            <div class="info-label">Surgery Name:</div>
-                            <div class="info-value">${surgeryDetails.name}</div>
-                        </div>
+                    let displayHTML = '';
+                    
+                    if (surgeryDetails.doctorName) {
+                        displayHTML += `
+                            <div class="info-row">
+                                <div class="info-label">Doctor's Name:</div>
+                                <div class="info-value">${surgeryDetails.doctorName}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    if (surgeryDetails.name) {
+                        displayHTML += `
+                            <div class="info-row">
+                                <div class="info-label">Surgery Name:</div>
+                                <div class="info-value">${surgeryDetails.name}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    displayHTML += `
                         <div class="info-row">
                             <div class="info-label">Phone:</div>
                             <div class="info-value">${surgeryDetails.phone || 'Not provided'}</div>
@@ -2322,6 +2347,7 @@
                 captureText += "\n" + "-".repeat(40) + "\n";
                 captureText += "SURGERY/CLINIC DETAILS\n";
                 captureText += "-".repeat(40) + "\n";
+                captureText += `Doctor's Name: ${surgeryDetails.doctorName || "Not provided"}\n`;
                 captureText += `Surgery Name: ${surgeryDetails.name || "Not provided"}\n`;
                 captureText += `Phone: ${surgeryDetails.phone || "Not provided"}\n`;
                 
@@ -2395,6 +2421,7 @@
                 captureText += "SUMMARY\n";
                 captureText += "=".repeat(80) + "\n";
                 captureText += `Patient: ${patientDetails.name || "Not specified"}\n`;
+                captureText += `Doctor: ${surgeryDetails.doctorName || "Not specified"}\n`;
                 captureText += `Surgery/Clinic: ${surgeryDetails.name || "Not specified"}\n`;
                 captureText += `Medicines Count: ${medicines.length}\n`;
                 captureText += `BP Readings Count: ${bpReadings.length}\n`;
@@ -2554,6 +2581,7 @@
                 
                 allData.push(["SURGERY/CLINIC DETAILS"]);
                 allData.push(["Field", "Value"]);
+                allData.push(["Doctor's Name", surgeryDetails.doctorName || ""]);
                 allData.push(["Surgery Name", surgeryDetails.name || ""]);
                 allData.push(["Phone", surgeryDetails.phone || ""]);
                 allData.push([""]);
@@ -2643,6 +2671,7 @@
                 allData.push(["SUMMARY"]);
                 allData.push(["Item", "Value"]);
                 allData.push(["Patient", patientDetails.name || "Not specified"]);
+                allData.push(["Doctor", surgeryDetails.doctorName || "Not specified"]);
                 allData.push(["Surgery/Clinic", surgeryDetails.name || "Not specified"]);
                 allData.push(["Medicines Count", medicines.length]);
                 allData.push(["BP Readings Count", bpReadings.length]);
@@ -2839,6 +2868,7 @@
                     localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
                     localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
                     
+                    document.getElementById('surgery-doctor').value = '';
                     document.getElementById('surgery-name').value = '';
                     document.getElementById('surgery-phone').value = '';
                     document.getElementById('surgery-house').value = '';
