@@ -1330,24 +1330,25 @@
                         <div>
                             <i class="fas fa-sticky-note"></i> General Notes
                         </div>
-                        <button class="edit-btn" id="edit-general-notes-btn">
-                            <i class="fas fa-edit"></i> Edit Notes
+                        <button class="btn btn-primary btn-sm" id="add-general-note-btn">
+                            <i class="fas fa-plus"></i> Add Row
                         </button>
                     </div>
                     
-                    <div class="general-notes-content" id="general-notes-display">
-                    </div>
-                    
-                    <div class="general-notes-edit" id="general-notes-edit">
-                        <textarea id="general-notes-textarea" placeholder="Enter general notes, observations, or any additional information about your health, medications, or appointments..."></textarea>
-                        <div class="general-notes-actions">
-                            <button class="btn btn-primary" id="save-general-notes-btn">
-                                <i class="fas fa-save"></i> Save Notes
-                            </button>
-                            <button class="btn btn-secondary" id="cancel-general-notes-btn">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                        </div>
+                    <div style="overflow-x: auto;">
+                        <table id="general-notes-table" style="min-width: 600px;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 160px;">Date</th>
+                                    <th style="width: 220px;">Type of Operation</th>
+                                    <th>Notes</th>
+                                    <th style="width: 60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="general-notes-tbody">
+                            </tbody>
+                        </table>
+                        <div id="no-general-notes" class="no-data">No notes recorded. Click "Add Row" to add a note.</div>
                     </div>
                 </div>
                 
@@ -1448,10 +1449,7 @@
             }
             
             if (!localStorage.getItem('kamal-general-notes')) {
-                localStorage.setItem('kamal-general-notes', JSON.stringify({
-                    content: "",
-                    lastUpdated: ""
-                }));
+                localStorage.setItem('kamal-general-notes', JSON.stringify([]));
             }
             
             if (!localStorage.getItem('kamal-surgery-details')) {
@@ -1485,10 +1483,9 @@
             
             let medicines = JSON.parse(localStorage.getItem('kamal-medicines')) || [];
             let bpReadings = JSON.parse(localStorage.getItem('kamal-bp-readings')) || [];
-            let generalNotes = JSON.parse(localStorage.getItem('kamal-general-notes')) || {
-                content: "",
-                lastUpdated: ""
-            };
+            let generalNotesRaw = JSON.parse(localStorage.getItem('kamal-general-notes'));
+            // Backward compat: old format was an object {content, lastUpdated}
+            let generalNotes = Array.isArray(generalNotesRaw) ? generalNotesRaw : [];
             let surgeryDetails = JSON.parse(localStorage.getItem('kamal-surgery-details')) || {};
             let patientDetails = JSON.parse(localStorage.getItem('kamal-patient-details')) || {
                 name: "Kamal Dhunna",
@@ -1517,9 +1514,7 @@
             document.getElementById('add-bp-btn').addEventListener('click', addBPReadingRow);
             document.getElementById('save-surgery-btn').addEventListener('click', saveSurgeryDetails);
             document.getElementById('save-patient-btn').addEventListener('click', savePatientDetails);
-            document.getElementById('edit-general-notes-btn').addEventListener('click', editGeneralNotes);
-            document.getElementById('save-general-notes-btn').addEventListener('click', saveGeneralNotes);
-            document.getElementById('cancel-general-notes-btn').addEventListener('click', cancelEditGeneralNotes);
+            document.getElementById('add-general-note-btn').addEventListener('click', addGeneralNoteRow);
             document.getElementById('main-controls-btn').addEventListener('click', toggleMainControlsDropdown);
             document.getElementById('header-capture-all').addEventListener('click', captureAllDetails);
             document.getElementById('header-theme-selection').addEventListener('click', showThemeModal);
@@ -1645,47 +1640,59 @@
                 localStorage.setItem('kamal-bp-readings', JSON.stringify(bpReadings));
             }
             
-            function saveGeneralNotes() {
-                const notesContent = document.getElementById('general-notes-textarea').value;
-                generalNotes = {
-                    content: notesContent,
-                    lastUpdated: new Date().toISOString()
-                };
-                
-                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
-                loadGeneralNotes();
-                showStatus('General notes saved', 'success');
+            function addGeneralNoteRow() {
+                const today = new Date().toISOString().split('T')[0];
+                const newNote = { id: Date.now(), date: today, type: '', notes: '' };
+                generalNotes.push(newNote);
+                saveGeneralNotes();
+                renderGeneralNotes();
             }
             
-            function loadGeneralNotes() {
-                const displayElement = document.getElementById('general-notes-display');
-                const editElement = document.getElementById('general-notes-edit');
-                const textarea = document.getElementById('general-notes-textarea');
-                
-                if (generalNotes.content) {
-                    displayElement.innerHTML = `<div class="general-notes-display">${generalNotes.content}</div>`;
-                    textarea.value = generalNotes.content;
-                    displayElement.style.display = 'block';
-                    editElement.style.display = 'none';
-                } else {
-                    displayElement.innerHTML = '<div class="general-notes-display" style="color: var(--text-muted); font-style: italic;">No notes added. Click "Edit Notes" to add general notes about your health, medications, appointments, or any observations.</div>';
-                    textarea.value = '';
-                    displayElement.style.display = 'block';
-                    editElement.style.display = 'none';
+            function saveGeneralNotes() {
+                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+            }
+            
+            function deleteGeneralNote(id) {
+                if (confirm('Delete this note?')) {
+                    generalNotes = generalNotes.filter(n => n.id !== id);
+                    saveGeneralNotes();
+                    renderGeneralNotes();
                 }
             }
             
-            function editGeneralNotes() {
-                const displayElement = document.getElementById('general-notes-display');
-                const editElement = document.getElementById('general-notes-edit');
-                
-                displayElement.style.display = 'none';
-                editElement.style.display = 'block';
-                document.getElementById('general-notes-textarea').focus();
+            function updateGeneralNote(id, field, value) {
+                const note = generalNotes.find(n => n.id === id);
+                if (note) {
+                    note[field] = value;
+                    saveGeneralNotes();
+                }
             }
             
-            function cancelEditGeneralNotes() {
-                loadGeneralNotes();
+            function loadGeneralNotes() {
+                renderGeneralNotes();
+            }
+            
+            function renderGeneralNotes() {
+                const tbody = document.getElementById('general-notes-tbody');
+                const noData = document.getElementById('no-general-notes');
+                tbody.innerHTML = '';
+                
+                if (!generalNotes.length) {
+                    noData.style.display = 'block';
+                    return;
+                }
+                noData.style.display = 'none';
+                
+                generalNotes.forEach(note => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="date" value="${note.date || ''}" onchange="updateGeneralNote(${note.id}, 'date', this.value)" style="min-width:130px;"></td>
+                        <td><input type="text" value="${note.type || ''}" placeholder="e.g. Surgery, Appointment..." onchange="updateGeneralNote(${note.id}, 'type', this.value)" oninput="updateGeneralNote(${note.id}, 'type', this.value)"></td>
+                        <td><input type="text" value="${note.notes || ''}" placeholder="Enter notes..." onchange="updateGeneralNote(${note.id}, 'notes', this.value)" oninput="updateGeneralNote(${note.id}, 'notes', this.value)"></td>
+                        <td><button class="delete-btn" onclick="deleteGeneralNote(${note.id})"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             }
             
             function saveSurgeryDetails() {
@@ -2408,11 +2415,12 @@
                 captureText += "\n" + "-".repeat(40) + "\n";
                 captureText += "GENERAL NOTES\n";
                 captureText += "-".repeat(40) + "\n";
-                if (generalNotes.content) {
-                    captureText += generalNotes.content + "\n";
-                    if (generalNotes.lastUpdated) {
-                        captureText += `\nLast Updated: ${new Date(generalNotes.lastUpdated).toLocaleString()}\n`;
-                    }
+                if (generalNotes.length) {
+                    captureText += `${"Date".padEnd(12)} ${"Type of Operation".padEnd(25)} Notes\n`;
+                    captureText += "-".repeat(70) + "\n";
+                    generalNotes.forEach(n => {
+                        captureText += `${(n.date || '').padEnd(12)} ${(n.type || '').padEnd(25)} ${n.notes || ''}\n`;
+                    });
                 } else {
                     captureText += "No general notes recorded.\n";
                 }
@@ -2425,7 +2433,7 @@
                 captureText += `Surgery/Clinic: ${surgeryDetails.name || "Not specified"}\n`;
                 captureText += `Medicines Count: ${medicines.length}\n`;
                 captureText += `BP Readings Count: ${bpReadings.length}\n`;
-                captureText += `Has General Notes: ${generalNotes.content ? "Yes" : "No"}\n`;
+                captureText += `Has General Notes: ${generalNotes.length ? "Yes" : "No"}\n`;
                 captureText += `Last Updated: ${new Date().toLocaleString()}\n`;
                 
                 document.getElementById('capture-content').textContent = captureText;
@@ -2652,19 +2660,13 @@
                     allData.push([""]);
                 }
                 
-                if (generalNotes.content) {
+                if (generalNotes.length) {
                     allData.push(["GENERAL NOTES"]);
-                    allData.push(["Content:"]);
+                    allData.push(["Date", "Type of Operation", "Notes"]);
                     
-                    const notesLines = generalNotes.content.split('\n');
-                    notesLines.forEach(line => {
-                        allData.push([line]);
+                    generalNotes.forEach(n => {
+                        allData.push([n.date || '', n.type || '', n.notes || '']);
                     });
-                    
-                    if (generalNotes.lastUpdated) {
-                        allData.push([""]);
-                        allData.push(["Last Updated:", new Date(generalNotes.lastUpdated).toLocaleString()]);
-                    }
                     allData.push([""]);
                 }
                 
@@ -2800,10 +2802,11 @@
                             bpReadings = data.bpReadings;
                             
                             if (data.generalNotes) {
-                                generalNotes = data.generalNotes;
+                                // Support both new array format and old object format
+                                generalNotes = Array.isArray(data.generalNotes) ? data.generalNotes : [];
                                 localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
                             } else if (data.bpNotes) {
-                                generalNotes = data.bpNotes;
+                                generalNotes = Array.isArray(data.bpNotes) ? data.bpNotes : [];
                                 localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
                             }
                             
@@ -2852,10 +2855,7 @@
                 if (confirm('Clear ALL data? This includes medicines, BP readings, general notes, and profile details. This cannot be undone.')) {
                     medicines = [];
                     bpReadings = [];
-                    generalNotes = {
-                        content: "",
-                        lastUpdated: ""
-                    };
+                    generalNotes = [];
                     surgeryDetails = {};
                     patientDetails = { 
                         name: "Kamal Dhunna",
@@ -2991,6 +2991,8 @@
             window.updateBPReading = updateBPReading;
             window.deleteMedicine = deleteMedicine;
             window.deleteBPReading = deleteBPReading;
+            window.deleteGeneralNote = deleteGeneralNote;
+            window.updateGeneralNote = updateGeneralNote;
             window.editSurgeryDetails = editSurgeryDetails;
             window.deleteSurgeryDetails = deleteSurgeryDetails;
             window.editPatientDetails = editPatientDetails;
