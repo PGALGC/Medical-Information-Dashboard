@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Info</title>
+    <title>Medical Information</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -1019,6 +1019,112 @@
                 min-height: 100px;
             }
         }
+
+        /* ===== HOW TO MODAL STYLES ===== */
+        .howto-tab {
+            background: color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-1) 10%);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.25s;
+        }
+        .howto-tab:hover { color: var(--text-light); border-color: var(--accent-color-1); }
+        .howto-tab.active {
+            background: linear-gradient(to right, var(--accent-color-1), var(--accent-color-2));
+            color: white;
+            border-color: transparent;
+        }
+        .howto-panel { display: none; }
+        .howto-panel.active { display: block; }
+        .ht-section { margin-bottom: 18px; }
+        .ht-icon-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-color-1);
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color-1));
+        }
+        .ht-icon-title i { font-size: 1.1rem; color: var(--accent-color-2); }
+        .ht-section p { font-size: 0.88rem; color: var(--text-light); line-height: 1.6; }
+        .ht-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .ht-card {
+            background: color-mix(in srgb, var(--secondary-dark) 80%, var(--accent-color-1) 8%);
+            border: 1px solid color-mix(in srgb, var(--border-color) 60%, var(--accent-color-1));
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        .ht-card:hover { border-color: var(--accent-color-1); transform: translateY(-2px); }
+        .ht-card i { font-size: 1.2rem; color: var(--accent-color-1); margin-bottom: 2px; }
+        .ht-card strong { font-size: 0.85rem; color: var(--text-light); }
+        .ht-card span { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+        .ht-step-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
+        .ht-step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background: color-mix(in srgb, var(--secondary-dark) 85%, var(--accent-color-1) 5%);
+            border: 1px solid color-mix(in srgb, var(--border-color) 60%, var(--accent-color-1));
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .ht-step-num {
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color-1), var(--accent-color-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .ht-step > div:last-child { flex: 1; }
+        .ht-step strong { display: block; font-size: 0.9rem; color: var(--accent-color-1); margin-bottom: 4px; }
+        .ht-step p { font-size: 0.84rem; color: var(--text-light); line-height: 1.55; margin: 0; }
+        .ht-ul { margin: 6px 0 0 0; padding-left: 18px; font-size: 0.83rem; color: var(--text-light); line-height: 1.7; }
+        .ht-ul li { margin-bottom: 2px; }
+        .ht-ul li strong { color: var(--accent-color-1); }
+        .ht-tip {
+            background: color-mix(in srgb, var(--accent-color-1) 12%, transparent);
+            border-left: 4px solid var(--accent-color-1);
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 0.84rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .ht-tip i { color: var(--accent-color-1); margin-top: 2px; flex-shrink: 0; }
+        @media (max-width: 600px) {
+            .ht-grid { grid-template-columns: 1fr 1fr; }
+            #howto-tabs { gap: 4px; }
+            .howto-tab { padding: 5px 10px; font-size: 0.72rem; }
+        }
     </style>
 </head>
 <body>
@@ -1033,6 +1139,9 @@
                     <i class="fas fa-bars"></i> Quick Actions
                 </button>
                 <div class="header-dropdown-content" id="main-controls-dropdown">
+                    <div class="header-dropdown-item" id="header-how-to">
+                        <i class="fas fa-question-circle"></i> How To Use This App
+                    </div>
                     <div class="header-dropdown-item" id="header-capture-all">
                         <i class="fas fa-file-alt"></i> Complete Capture Details
                     </div>
@@ -1435,6 +1544,255 @@
     </div>
 
     <input type="file" id="restore-file" accept=".json" style="display: none;">
+
+    <!-- HOW TO MODAL -->
+    <div id="howto-modal" class="modal">
+        <div class="modal-content" style="max-width:860px; max-height:88vh;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-question-circle"></i>
+                    <h2>How To Use This App</h2>
+                </div>
+                <span class="close-modal" data-modal="howto-modal">&times;</span>
+            </div>
+            <div id="howto-content" style="padding: 5px 10px 20px;">
+
+                <!-- NAV TABS -->
+                <div id="howto-tabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--border-color);padding-bottom:12px;">
+                    <button class="howto-tab active" data-tab="overview"><i class="fas fa-home"></i> Overview</button>
+                    <button class="howto-tab" data-tab="quickactions"><i class="fas fa-bars"></i> Quick Actions</button>
+                    <button class="howto-tab" data-tab="surgery"><i class="fas fa-hospital"></i> Surgery / Clinic</button>
+                    <button class="howto-tab" data-tab="patient"><i class="fas fa-user-injured"></i> Patient Details</button>
+                    <button class="howto-tab" data-tab="medicines"><i class="fas fa-pills"></i> Medicines</button>
+                    <button class="howto-tab" data-tab="bp"><i class="fas fa-heartbeat"></i> BP &amp; ECG</button>
+                    <button class="howto-tab" data-tab="notes"><i class="fas fa-sticky-note"></i> General Notes</button>
+                    <button class="howto-tab" data-tab="data"><i class="fas fa-database"></i> Data &amp; Backup</button>
+                    <button class="howto-tab" data-tab="tips"><i class="fas fa-lightbulb"></i> Tips</button>
+                </div>
+
+                <!-- PANELS -->
+                <div class="howto-panel active" id="tab-overview">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-stethoscope"></i><span>Welcome to Your Medical Dashboard</span></div>
+                        <p>This app is a <strong>personal health tracker</strong> for Kamal Dhunna. Everything is stored <strong>privately in your browser</strong> — no data is sent to any server or the internet.</p>
+                    </div>
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-th-large"></i><span>What the App Contains</span></div>
+                        <div class="ht-grid">
+                            <div class="ht-card"><i class="fas fa-hospital"></i><strong>Surgery / Clinic Details</strong><span>Store your doctor and clinic contact info &amp; address.</span></div>
+                            <div class="ht-card"><i class="fas fa-user-injured"></i><strong>Patient Details</strong><span>Your personal info, NHS &amp; hospital numbers, next of kin.</span></div>
+                            <div class="ht-card"><i class="fas fa-pills"></i><strong>Medication List</strong><span>Track all your medicines, dosage and timing.</span></div>
+                            <div class="ht-card"><i class="fas fa-heartbeat"></i><strong>BP &amp; ECG Readings</strong><span>Log blood pressure, pulse, ECG &amp; diagnosis notes.</span></div>
+                            <div class="ht-card"><i class="fas fa-sticky-note"></i><strong>General Notes</strong><span>Record operations, appointments or health events by date.</span></div>
+                            <div class="ht-card"><i class="fas fa-database"></i><strong>Data Management</strong><span>Backup, restore and export your data to Excel or text.</span></div>
+                        </div>
+                    </div>
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-save"></i><span>Auto-Save</span></div>
+                        <p>All changes save <strong>automatically</strong> to your browser's local storage as you type. You will never lose data from typing — but use <em>Backup All Data</em> regularly to keep a safe copy on your device.</p>
+                    </div>
+                </div>
+
+                <div class="howto-panel" id="tab-quickactions">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-bars"></i><span>Quick Actions Button (top-right of header)</span></div>
+                        <p>Click the <strong>Quick Actions</strong> button in the top-right corner of the green header bar to open a dropdown menu with four options:</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-question-circle"></i></div>
+                            <div>
+                                <strong>How To Use This App</strong>
+                                <p>Opens this guide. Navigate using the tabs at the top to jump to any section.</p>
+                            </div>
+                        </div>
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-file-alt"></i></div>
+                            <div>
+                                <strong>Complete Capture Details</strong>
+                                <p>Generates a full formatted text summary of <em>all</em> your data — profile, doctor, medicines, BP readings, and notes. Inside the summary window you can:</p>
+                                <ul class="ht-ul">
+                                    <li><strong>Copy to Clipboard</strong> — pastes the full summary to your clipboard so you can paste it into an email or message.</li>
+                                    <li><strong>Print Summary</strong> — opens your browser's print dialog to print the summary on paper.</li>
+                                    <li><strong>Save as Text File</strong> — downloads the summary as a <code>.txt</code> file to your device.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-palette"></i></div>
+                            <div>
+                                <strong>Theme Selection</strong>
+                                <p>Change the colour scheme of the entire app. Pick from a range of colour themes (Green, Blue, Purple, Red, etc.). The theme is saved and restored every time you open the app.</p>
+                            </div>
+                        </div>
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-database"></i></div>
+                            <div>
+                                <strong>Data Management</strong>
+                                <p>See the <em>Data &amp; Backup</em> tab in this guide for full details.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="howto-panel" id="tab-surgery">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-hospital"></i><span>Surgery / Clinic Details Section</span></div>
+                        <p>Store your GP surgery or clinic's contact details here. This info appears in the Complete Capture report.</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Fill in the form fields</strong><p>Enter the Doctor's Name, Surgery/Clinic Name, Phone Number, and full address (House, Line 1, Line 2, Town, County, Postcode).</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num">2</div><div><strong>Click "Save Surgery Details"</strong><p>The green button at the bottom saves all fields. The form collapses into a neat display view.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-cog"></i></div><div><strong>Options dropdown (⚙ button)</strong><p>Click the green <em>Options</em> button in the section header to reveal:</p>
+                            <ul class="ht-ul">
+                                <li><strong>Edit Details</strong> — re-opens the form so you can make changes.</li>
+                                <li><strong>Delete Details</strong> — clears all surgery/clinic fields permanently (after confirmation).</li>
+                            </ul>
+                        </div></div>
+                    </div>
+                </div>
+
+                <div class="howto-panel" id="tab-patient">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-user-injured"></i><span>Patient Details Section</span></div>
+                        <p>Store your own personal and medical identification details here.</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Fill in your details</strong>
+                            <ul class="ht-ul">
+                                <li><strong>Full Name</strong> — pre-filled as "Kamal Dhunna".</li>
+                                <li><strong>Date of Birth</strong> — use the date picker.</li>
+                                <li><strong>Phone Number</strong> — your personal phone.</li>
+                                <li><strong>NHS Number</strong> — your 10-digit NHS number.</li>
+                                <li><strong>Hospital Number</strong> — your hospital patient ID.</li>
+                                <li><strong>Next of Kin Name</strong> — emergency contact name.</li>
+                                <li><strong>Next of Kin Phone</strong> — emergency contact number.</li>
+                                <li><strong>Address</strong> — your home address (House, Lines, Town, County, Postcode).</li>
+                            </ul>
+                        </div></div>
+                        <div class="ht-step"><div class="ht-step-num">2</div><div><strong>Click "Save Patient Details"</strong><p>Saves all fields and shows a summary display.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-cog"></i></div><div><strong>Options dropdown</strong><ul class="ht-ul"><li><strong>Edit Details</strong> — reopen the form to update info.</li><li><strong>Delete Details</strong> — wipe all patient fields (after confirmation).</li></ul></div></div>
+                    </div>
+                </div>
+
+                <div class="howto-panel" id="tab-medicines">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-pills"></i><span>Medication List Section</span></div>
+                        <p>Track all your current medications in a table. Each row is one medicine.</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Click "Add Medicine"</strong><p>The green <em>Add Medicine</em> button (bottom-right of the section) adds a new blank row to the table.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num">2</div><div><strong>Fill in each column</strong>
+                            <ul class="ht-ul">
+                                <li><strong>Medicine Name</strong> — type the name of the drug (e.g. Amlodipine).</li>
+                                <li><strong>Dosage (mg)</strong> — enter the milligram amount (e.g. 5mg).</li>
+                                <li><strong>Due Time / Frequency</strong> — enter when it's taken (e.g. "Morning", "8am &amp; 8pm", "Once daily").</li>
+                            </ul>
+                            <p style="margin-top:6px;">Changes save automatically as you type — no save button needed.</p>
+                        </div></div>
+                        <div class="ht-step"><div class="ht-step-num">3</div><div><strong>Delete a row</strong><p>Click the red <i class="fas fa-trash" style="color:#e74c3c;"></i> trash icon on any row to delete that medicine (you will be asked to confirm).</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-cog"></i></div><div><strong>Options dropdown</strong><ul class="ht-ul"><li><strong>Export Medicines to Excel</strong> — downloads just the medicines table as an <code>.xlsx</code> spreadsheet.</li><li><strong>Clear All Medicines</strong> — removes every medicine in one go (after confirmation).</li></ul></div></div>
+                    </div>
+                </div>
+
+                <div class="howto-panel" id="tab-bp">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-heartbeat"></i><span>Blood Pressure &amp; ECG Readings Section</span></div>
+                        <p>Log every blood pressure measurement and ECG result. Each row is one reading.</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Click "Add BP Reading"</strong><p>The green button at the bottom-right adds a new row, pre-filled with today's date and current time.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num">2</div><div><strong>Fill in each column</strong>
+                            <ul class="ht-ul">
+                                <li><strong>DATE</strong> — date of the reading (date picker, defaults to today).</li>
+                                <li><strong>TIME</strong> — time of the reading (defaults to now).</li>
+                                <li><strong>SYSTOLIC</strong> — upper BP number (e.g. 120).</li>
+                                <li><strong>DIASTOLIC</strong> — lower BP number (e.g. 80).</li>
+                                <li><strong>PULSE</strong> — heart rate in bpm.</li>
+                                <li><strong>SITTING DOWN</strong> — BP reading taken while seated (Yes / No / value).</li>
+                                <li><strong>STANDING UP</strong> — BP reading taken while standing (Yes / No / value).</li>
+                                <li><strong>ECG MONITOR</strong> — result or reference from ECG monitor if used.</li>
+                                <li><strong>TYPE DIAGNOSIS</strong> — any diagnosis note (e.g. "Normal", "Stage 1 Hypertension").</li>
+                            </ul>
+                            <p style="margin-top:6px;">All fields save automatically as you type.</p>
+                        </div></div>
+                        <div class="ht-step"><div class="ht-step-num">3</div><div><strong>Delete a row</strong><p>Click the red <i class="fas fa-trash" style="color:#e74c3c;"></i> trash icon to remove a reading (confirmation required).</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-cog"></i></div><div><strong>Options dropdown</strong><ul class="ht-ul"><li><strong>Export BP Readings to Excel</strong> — downloads just the BP table as <code>.xlsx</code>.</li><li><strong>Clear All BP Readings</strong> — removes every reading (confirmation required).</li></ul></div></div>
+                    </div>
+                    <div class="ht-tip"><i class="fas fa-info-circle"></i> The table scrolls <strong>horizontally</strong> on smaller screens — swipe left/right to see all columns.</div>
+                </div>
+
+                <div class="howto-panel" id="tab-notes">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-sticky-note"></i><span>General Notes Section</span></div>
+                        <p>Found inside the BP &amp; ECG section. Use this to log any medical events — operations, hospital visits, appointments, or observations.</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Click "Add Row"</strong><p>The green <em>Add Row</em> button creates a new entry pre-filled with today's date.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num">2</div><div><strong>Fill in each column</strong>
+                            <ul class="ht-ul">
+                                <li><strong>Date</strong> — click the date picker to choose the date of the event.</li>
+                                <li><strong>Type of Operation</strong> — describe the type of event (e.g. "Hip Surgery", "GP Appointment", "Blood Test").</li>
+                                <li><strong>Notes</strong> — any additional details, outcomes or follow-ups.</li>
+                            </ul>
+                            <p style="margin-top:6px;">Data saves automatically as you type.</p>
+                        </div></div>
+                        <div class="ht-step"><div class="ht-step-num">3</div><div><strong>Delete a row</strong><p>Click the red <i class="fas fa-trash" style="color:#e74c3c;"></i> trash icon to remove that note (confirmation required).</p></div></div>
+                    </div>
+                </div>
+
+                <div class="howto-panel" id="tab-data">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-database"></i><span>Data Management (via Quick Actions → Data Management)</span></div>
+                        <p>All your data lives in your browser. Use these tools to keep it safe and portable.</p>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-download"></i></div>
+                            <div><strong>Backup All Data</strong>
+                                <p>Downloads a <code>.json</code> file containing <em>everything</em> — medicines, BP readings, general notes, patient details, surgery details, and theme. Store this file safely on your computer or cloud storage. <strong>Do this regularly!</strong></p>
+                            </div>
+                        </div>
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-upload"></i></div>
+                            <div><strong>Restore from Backup</strong>
+                                <p>Click this and select a previously saved <code>.json</code> backup file. All data will be restored from that file, <strong>replacing</strong> whatever is currently in the app.</p>
+                            </div>
+                        </div>
+                        <div class="ht-step">
+                            <div class="ht-step-num"><i class="fas fa-file-excel"></i></div>
+                            <div><strong>Export All to Excel (Single Sheet)</strong>
+                                <p>Downloads all your data — profile, medicines, BP readings, and general notes — into a single <code>.xlsx</code> spreadsheet. Useful for sharing with a doctor or keeping a printable record.</p>
+                            </div>
+                        </div>
+                        <div class="ht-step">
+                            <div class="ht-step-num" style="background:linear-gradient(135deg,#e74c3c,#c0392b);"><i class="fas fa-trash"></i></div>
+                            <div><strong>Clear All Data</strong>
+                                <p style="color:#e74c3c;font-weight:600;">⚠ Warning: This permanently deletes ALL data including medicines, BP readings, notes, and profile info. This cannot be undone. Always backup first!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ht-tip"><i class="fas fa-shield-alt"></i> Your data <strong>never leaves your device</strong>. It is stored entirely in your browser's local storage and is not sent anywhere online.</div>
+                </div>
+
+                <div class="howto-panel" id="tab-tips">
+                    <div class="ht-section">
+                        <div class="ht-icon-title"><i class="fas fa-lightbulb"></i><span>Tips &amp; Best Practices</span></div>
+                    </div>
+                    <div class="ht-step-list">
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-calendar-check"></i></div><div><strong>Back up regularly</strong><p>Use <em>Quick Actions → Data Management → Backup All Data</em> at least once a week. Save the file to your Downloads folder, Google Drive, or email it to yourself.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-mobile-alt"></i></div><div><strong>Works on mobile</strong><p>The app is fully responsive. On phones, sections stack vertically and wide tables scroll horizontally with a swipe.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-print"></i></div><div><strong>Printing for a doctor</strong><p>Use <em>Quick Actions → Complete Capture Details → Print Summary</em> to print a clean A4 summary of all your health information to bring to an appointment.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-palette"></i></div><div><strong>Personalise the look</strong><p>Use <em>Quick Actions → Theme Selection</em> to pick a colour scheme that is easy on your eyes.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-exclamation-triangle"></i></div><div><strong>Don't clear browser data</strong><p>Clearing your browser's cache or cookies will <strong>erase all app data</strong>. Always backup before clearing browser storage.</p></div></div>
+                        <div class="ht-step"><div class="ht-step-num"><i class="fas fa-file-excel"></i></div><div><strong>Excel exports</strong><p>Individual sections (Medicines, BP Readings) can be exported using their own <em>Options → Export to Excel</em> button. The Data Management panel exports everything into one sheet.</p></div></div>
+                    </div>
+                </div>
+
+            </div><!-- end howto-content -->
+        </div>
+    </div>
+    <!-- END HOW TO MODAL -->
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -1515,6 +1873,28 @@
             document.getElementById('save-surgery-btn').addEventListener('click', saveSurgeryDetails);
             document.getElementById('save-patient-btn').addEventListener('click', savePatientDetails);
             document.getElementById('add-general-note-btn').addEventListener('click', addGeneralNoteRow);
+            document.getElementById('header-how-to').addEventListener('click', function() {
+                closeAllDropdowns();
+                document.getElementById('howto-modal').style.display = 'block';
+            });
+
+            // Tab switching
+            document.querySelectorAll('.howto-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.howto-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.howto-panel').forEach(p => p.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Close howto modal
+            document.querySelector('#howto-modal .close-modal').addEventListener('click', function() {
+                document.getElementById('howto-modal').style.display = 'none';
+            });
+            document.getElementById('howto-modal').addEventListener('click', function(e) {
+                if (e.target === this) this.style.display = 'none';
+            });
             document.getElementById('main-controls-btn').addEventListener('click', toggleMainControlsDropdown);
             document.getElementById('header-capture-all').addEventListener('click', captureAllDetails);
             document.getElementById('header-theme-selection').addEventListener('click', showThemeModal);
@@ -1546,7 +1926,7 @@
             document.getElementById('modal-clear-all-data').addEventListener('click', clearAllData);
             
             window.addEventListener('click', function(event) {
-                const modals = ['capture-modal', 'theme-modal', 'data-modal'];
+                const modals = ['capture-modal', 'theme-modal', 'data-modal', 'howto-modal'];
                 modals.forEach(modalId => {
                     const modal = document.getElementById(modalId);
                     if (event.target === modal) {
@@ -1556,7 +1936,8 @@
             });
             
             document.addEventListener('click', function(event) {
-                if (!event.target.matches('.dropdown-btn') && !event.target.matches('.header-dropdown-btn')) {
+                const isDropdownBtn = event.target.closest('.dropdown-btn') || event.target.closest('.header-dropdown-btn');
+                if (!isDropdownBtn) {
                     closeAllDropdowns();
                 }
             });
