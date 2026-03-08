@@ -1265,7 +1265,7 @@
                 <div class="form-grid" id="patient-form">
                     <div class="form-group full-width">
                         <label for="patient-name">Full Name</label>
-                        <input type="text" id="patient-name" placeholder="Enter patient full name" value="Patients Name">
+                        <input type="text" id="patient-name" placeholder="Enter patient full name" value="PATIENT">
                     </div>
                     
                     <div class="form-group">
@@ -1660,7 +1660,7 @@
                     <div class="ht-step-list">
                         <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Fill in your details</strong>
                             <ul class="ht-ul">
-                                <li><strong>Full Name</strong> — pre-filled as "Patients Name".</li>
+                                <li><strong>Full Name</strong> — pre-filled as "PATIENT".</li>
                                 <li><strong>Date of Birth</strong> — use the date picker.</li>
                                 <li><strong>Phone Number</strong> — your personal phone.</li>
                                 <li><strong>NHS Number</strong> — your 10-digit NHS number.</li>
@@ -1798,31 +1798,31 @@
     
     <script>
         const initializeData = () => {
-            if (!localStorage.getItem('kamal-medicines')) {
-                localStorage.setItem('kamal-medicines', JSON.stringify([]));
+            if (!localStorage.getItem('patient-medicines')) {
+                localStorage.setItem('patient-medicines', JSON.stringify([]));
             }
             
-            if (!localStorage.getItem('kamal-bp-readings')) {
-                localStorage.setItem('kamal-bp-readings', JSON.stringify([]));
+            if (!localStorage.getItem('patient-bp-readings')) {
+                localStorage.setItem('patient-bp-readings', JSON.stringify([]));
             }
             
-            if (!localStorage.getItem('kamal-general-notes')) {
-                localStorage.setItem('kamal-general-notes', JSON.stringify([]));
+            if (!localStorage.getItem('patient-general-notes')) {
+                localStorage.setItem('patient-general-notes', JSON.stringify([]));
             }
             
-            if (!localStorage.getItem('kamal-surgery-details')) {
-                localStorage.setItem('kamal-surgery-details', JSON.stringify({}));
+            if (!localStorage.getItem('patient-surgery-details')) {
+                localStorage.setItem('patient-surgery-details', JSON.stringify({}));
             }
             
-            if (!localStorage.getItem('kamal-patient-details')) {
-                localStorage.setItem('kamal-patient-details', JSON.stringify({
-                    name: "Kamal Dhunna",
+            if (!localStorage.getItem('patient-patient-details')) {
+                localStorage.setItem('patient-patient-details', JSON.stringify({
+                    name: "PATIENT",
                     dob: ""
                 }));
             }
             
-            if (!localStorage.getItem('kamal-selected-theme')) {
-                localStorage.setItem('kamal-selected-theme', JSON.stringify({
+            if (!localStorage.getItem('patient-selected-theme')) {
+                localStorage.setItem('patient-selected-theme', JSON.stringify({
                     name: "Green",
                     color1: "#2ecc71",
                     color2: "#27ae60",
@@ -1839,18 +1839,18 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('current-year').textContent = new Date().getFullYear();
             
-            let medicines = JSON.parse(localStorage.getItem('kamal-medicines')) || [];
-            let bpReadings = JSON.parse(localStorage.getItem('kamal-bp-readings')) || [];
-            let generalNotesRaw = JSON.parse(localStorage.getItem('kamal-general-notes'));
+            let medicines = JSON.parse(localStorage.getItem('patient-medicines')) || [];
+            let bpReadings = JSON.parse(localStorage.getItem('patient-bp-readings')) || [];
+            let generalNotesRaw = JSON.parse(localStorage.getItem('patient-general-notes'));
             // Backward compat: old format was an object {content, lastUpdated}
             let generalNotes = Array.isArray(generalNotesRaw) ? generalNotesRaw : [];
-            let surgeryDetails = JSON.parse(localStorage.getItem('kamal-surgery-details')) || {};
-            let patientDetails = JSON.parse(localStorage.getItem('kamal-patient-details')) || {
-                name: "Kamal Dhunna",
+            let surgeryDetails = JSON.parse(localStorage.getItem('patient-surgery-details')) || {};
+            let patientDetails = JSON.parse(localStorage.getItem('patient-patient-details')) || {
+                name: "PATIENT",
                 dob: ""
             };
             
-            let selectedTheme = JSON.parse(localStorage.getItem('kamal-selected-theme')) || {
+            let selectedTheme = JSON.parse(localStorage.getItem('patient-selected-theme')) || {
                 name: "Green",
                 color1: "#2ecc71",
                 color2: "#27ae60",
@@ -2014,11 +2014,11 @@
             }
             
             function saveMedicines() {
-                localStorage.setItem('kamal-medicines', JSON.stringify(medicines));
+                localStorage.setItem('patient-medicines', JSON.stringify(medicines));
             }
             
             function saveBPReadings() {
-                localStorage.setItem('kamal-bp-readings', JSON.stringify(bpReadings));
+                localStorage.setItem('patient-bp-readings', JSON.stringify(bpReadings));
             }
             
             function addGeneralNoteRow() {
@@ -2030,7 +2030,7 @@
             }
             
             function saveGeneralNotes() {
-                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
             }
             
             function deleteGeneralNote(id) {
@@ -2092,7 +2092,7 @@
                     lastUpdated: new Date().toISOString()
                 };
                 
-                localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                localStorage.setItem('patient-surgery-details', JSON.stringify(surgeryDetails));
                 loadSurgeryDetails();
                 showStatus('Surgery details saved', 'success');
                 closeAllDropdowns();
@@ -2118,7 +2118,7 @@
                     lastUpdated: new Date().toISOString()
                 };
                 
-                localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                localStorage.setItem('patient-patient-details', JSON.stringify(patientDetails));
                 loadPatientDetails();
                 showStatus('Patient details saved', 'success');
                 closeAllDropdowns();
@@ -2136,7 +2136,7 @@
             function deleteSurgeryDetails() {
                 if (confirm('Delete all surgery details? This cannot be undone.')) {
                     surgeryDetails = {};
-                    localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                    localStorage.setItem('patient-surgery-details', JSON.stringify(surgeryDetails));
                     
                     document.getElementById('surgery-doctor').value = '';
                     document.getElementById('surgery-name').value = '';
@@ -2166,10 +2166,10 @@
             function deletePatientDetails() {
                 if (confirm('Delete all patient details? This will keep only the name. This cannot be undone.')) {
                     patientDetails = { 
-                        name: "Kamal Dhunna",
+                        name: "PATIENT",
                         dob: ""
                     };
-                    localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                    localStorage.setItem('patient-patient-details', JSON.stringify(patientDetails));
                     
                     document.getElementById('patient-phone').value = '';
                     document.getElementById('patient-nhs').value = '';
@@ -2313,7 +2313,7 @@
             
             function loadPatientDetails() {
                 if (!patientDetails.name && document.getElementById('patient-name').value === '') {
-                    document.getElementById('patient-name').value = 'Kamal Dhunna';
+                    document.getElementById('patient-name').value = 'PATIENT';
                 }
                 
                 if (patientDetails.name && (patientDetails.phone || patientDetails.nhsNumber || patientDetails.hospitalNumber || patientDetails.dob || patientDetails.address || patientDetails.nextKinName || patientDetails.nextKinPhone)) {
@@ -2644,7 +2644,7 @@
                     
                     themeCard.addEventListener('click', () => {
                         selectedTheme = theme;
-                        localStorage.setItem('kamal-selected-theme', JSON.stringify(theme));
+                        localStorage.setItem('patient-selected-theme', JSON.stringify(theme));
                         applyTheme(theme);
                         closeModal('theme-modal');
                         showStatus(`Theme changed to ${theme.name}`, 'success');
@@ -2856,7 +2856,7 @@
                 printWindow.document.write(`
                     <html>
                     <head>
-                        <title>Medical Information Summary - Kamal Dhunna</title>
+                        <title>Medical Information Summary - PATIENT</title>
                         <style>
                             body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
                             pre { white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; }
@@ -2872,7 +2872,7 @@
                     <body>
                         <div class="summary-header">
                             <h1>Medical Information Summary</h1>
-                            <p>Kamal Dhunna - Personal Health Tracker</p>
+                            <p>PATIENT - Personal Health Tracker</p>
                             <p>Generated: ${new Date().toLocaleString()}</p>
                         </div>
                         <pre>${captureText}</pre>
@@ -2898,7 +2898,7 @@
                 
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `kamal-medical-summary-${new Date().toISOString().slice(0, 10)}.txt`;
+                link.download = `patient-medical-summary-${new Date().toISOString().slice(0, 10)}.txt`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -2923,7 +2923,7 @@
                 
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `kamal-medical-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                link.download = `patient-medical-backup-${new Date().toISOString().slice(0, 10)}.json`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -3080,7 +3080,7 @@
                 
                 XLSX.utils.book_append_sheet(wb, ws, "Medical Report");
                 
-                const fileName = `kamal-medical-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                const fileName = `patient-medical-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
                 XLSX.writeFile(wb, fileName);
                 
                 showStatus('Excel report exported successfully!', 'success');
@@ -3110,7 +3110,7 @@
                 
                 XLSX.utils.book_append_sheet(wb, medicineWs, 'Medicines');
                 
-                const fileName = `kamal-medicines-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                const fileName = `patient-medicines-${new Date().toISOString().slice(0, 10)}.xlsx`;
                 XLSX.writeFile(wb, fileName);
                 
                 showStatus('Medicines exported to Excel!', 'success');
@@ -3162,7 +3162,7 @@
                 
                 XLSX.utils.book_append_sheet(wb, bpWs, 'Blood Pressure');
                 
-                const fileName = `kamal-bp-readings-${new Date().toISOString().slice(0, 10)}.xlsx`;
+                const fileName = `patient-bp-readings-${new Date().toISOString().slice(0, 10)}.xlsx`;
                 XLSX.writeFile(wb, fileName);
                 
                 showStatus('BP readings exported to Excel!', 'success');
@@ -3185,25 +3185,25 @@
                             if (data.generalNotes) {
                                 // Support both new array format and old object format
                                 generalNotes = Array.isArray(data.generalNotes) ? data.generalNotes : [];
-                                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                                localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
                             } else if (data.bpNotes) {
                                 generalNotes = Array.isArray(data.bpNotes) ? data.bpNotes : [];
-                                localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
+                                localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
                             }
                             
                             if (data.surgeryDetails) {
                                 surgeryDetails = data.surgeryDetails;
-                                localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
+                                localStorage.setItem('patient-surgery-details', JSON.stringify(surgeryDetails));
                             }
                             
                             if (data.patientDetails) {
                                 patientDetails = data.patientDetails;
-                                localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                                localStorage.setItem('patient-patient-details', JSON.stringify(patientDetails));
                             }
                             
                             if (data.selectedTheme) {
                                 selectedTheme = data.selectedTheme;
-                                localStorage.setItem('kamal-selected-theme', JSON.stringify(selectedTheme));
+                                localStorage.setItem('patient-selected-theme', JSON.stringify(selectedTheme));
                                 applyTheme(selectedTheme);
                                 initThemeModal();
                             }
@@ -3239,15 +3239,15 @@
                     generalNotes = [];
                     surgeryDetails = {};
                     patientDetails = { 
-                        name: "Kamal Dhunna",
+                        name: "PATIENT",
                         dob: ""
                     };
                     
-                    localStorage.setItem('kamal-medicines', JSON.stringify(medicines));
-                    localStorage.setItem('kamal-bp-readings', JSON.stringify(bpReadings));
-                    localStorage.setItem('kamal-general-notes', JSON.stringify(generalNotes));
-                    localStorage.setItem('kamal-surgery-details', JSON.stringify(surgeryDetails));
-                    localStorage.setItem('kamal-patient-details', JSON.stringify(patientDetails));
+                    localStorage.setItem('patient-medicines', JSON.stringify(medicines));
+                    localStorage.setItem('patient-bp-readings', JSON.stringify(bpReadings));
+                    localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
+                    localStorage.setItem('patient-surgery-details', JSON.stringify(surgeryDetails));
+                    localStorage.setItem('patient-patient-details', JSON.stringify(patientDetails));
                     
                     document.getElementById('surgery-doctor').value = '';
                     document.getElementById('surgery-name').value = '';
