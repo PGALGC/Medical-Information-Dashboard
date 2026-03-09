@@ -2760,7 +2760,12 @@
                 if (generalNotes.length) {
                     captureText += `${"Date".padEnd(12)} ${"Type of Operation".padEnd(25)} Notes\n`;
                     captureText += "-".repeat(70) + "\n";
-                    generalNotes.forEach(n => {
+                    const sortedNotes = [...generalNotes].sort((a, b) => {
+                        const da = a.date ? new Date(a.date) : new Date(0);
+                        const db = b.date ? new Date(b.date) : new Date(0);
+                        return da - db;
+                    });
+                    sortedNotes.forEach(n => {
                         captureText += `${(n.date || '').padEnd(12)} ${(n.type || '').padEnd(25)} ${n.notes || ''}\n`;
                     });
                 } else {
