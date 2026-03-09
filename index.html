@@ -902,6 +902,29 @@
             gap: 10px;
             justify-content: flex-end;
         }
+
+        /* ── Sort button in Date column header ── */
+        .sort-th-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: inherit;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: inherit;
+            font-weight: inherit;
+            width: 100%;
+            text-align: left;
+        }
+        .sort-th-btn:hover { color: var(--accent-color-1); }
+        .sort-icon {
+            font-size: 0.72rem;
+            opacity: 0.65;
+            transition: opacity 0.2s, color 0.2s;
+        }
+        .sort-th-btn:hover .sort-icon { opacity: 1; color: var(--accent-color-1); }
         
         @media (max-width: 768px) {
             body {
@@ -1178,7 +1201,6 @@
                 </div>
                 
                 <div class="form-grid" id="surgery-form">
-                    <!-- NEW FIELD: Doctor's Name -->
                     <div class="form-group full-width">
                         <label for="surgery-doctor">Doctor's Name</label>
                         <input type="text" id="surgery-doctor" placeholder="Enter doctor's full name">
@@ -1448,8 +1470,12 @@
                         <table id="general-notes-table" style="min-width: 600px;">
                             <thead>
                                 <tr>
-                                    <th style="width: 160px;">Date</th>
-                                    <th style="width: 220px;">Type of Operation/Episode</th>
+                                    <th style="width: 160px; cursor: pointer;" id="general-notes-date-th" onclick="toggleGeneralNotesSort()">
+                                        <button class="sort-th-btn" id="general-notes-sort-btn">
+                                            Date <span class="sort-icon" id="general-notes-sort-icon">&#9660;</span>
+                                        </button>
+                                    </th>
+                                    <th style="width: 220px;">Type of Operation</th>
                                     <th>Notes</th>
                                     <th style="width: 60px;"></th>
                                 </tr>
@@ -1731,7 +1757,7 @@
                         <div class="ht-step"><div class="ht-step-num">1</div><div><strong>Click "Add Row"</strong><p>The green <em>Add Row</em> button creates a new entry pre-filled with today's date.</p></div></div>
                         <div class="ht-step"><div class="ht-step-num">2</div><div><strong>Fill in each column</strong>
                             <ul class="ht-ul">
-                                <li><strong>Date</strong> — click the date picker to choose the date of the event.</li>
+                                <li><strong>Date</strong> — click the date picker to choose the date of the event. Click the <strong>Date</strong> column header to toggle sort order (newest first ▼ or oldest first ▲).</li>
                                 <li><strong>Type of Operation</strong> — describe the type of event (e.g. "Hip Surgery", "GP Appointment", "Blood Test").</li>
                                 <li><strong>Notes</strong> — any additional details, outcomes or follow-ups.</li>
                             </ul>
@@ -1844,6 +1870,8 @@
             let generalNotesRaw = JSON.parse(localStorage.getItem('patient-general-notes'));
             // Backward compat: old format was an object {content, lastUpdated}
             let generalNotes = Array.isArray(generalNotesRaw) ? generalNotesRaw : [];
+            // Sort order for General Notes date column: 'desc' = newest first (default)
+            let generalNotesSortOrder = 'desc';
             let surgeryDetails = JSON.parse(localStorage.getItem('patient-surgery-details')) || {};
             let patientDetails = JSON.parse(localStorage.getItem('patient-patient-details')) || {
                 name: "PATIENT",
@@ -2052,6 +2080,16 @@
             function loadGeneralNotes() {
                 renderGeneralNotes();
             }
+
+            // ── Toggle sort order for General Notes date column ──
+            function toggleGeneralNotesSort() {
+                generalNotesSortOrder = generalNotesSortOrder === 'desc' ? 'asc' : 'desc';
+                const icon = document.getElementById('general-notes-sort-icon');
+                if (icon) {
+                    icon.innerHTML = generalNotesSortOrder === 'desc' ? '&#9660;' : '&#9650;';
+                }
+                renderGeneralNotes();
+            }
             
             function renderGeneralNotes() {
                 const tbody = document.getElementById('general-notes-tbody');
@@ -2063,8 +2101,15 @@
                     return;
                 }
                 noData.style.display = 'none';
+
+                // Sort a copy by date according to current sort order
+                const sorted = [...generalNotes].sort((a, b) => {
+                    const da = a.date ? new Date(a.date) : new Date(0);
+                    const db = b.date ? new Date(b.date) : new Date(0);
+                    return generalNotesSortOrder === 'desc' ? db - da : da - db;
+                });
                 
-                generalNotes.forEach(note => {
+                sorted.forEach(note => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td><input type="date" value="${note.date || ''}" onchange="updateGeneralNote(${note.id}, 'date', this.value)" style="min-width:130px;"></td>
@@ -2518,96 +2563,16 @@
             
             function initThemeModal() {
                 const themes = [
-                    {
-                        name: "Green",
-                        color1: "#2ecc71",
-                        color2: "#27ae60",
-                        bg1: "#16222a",
-                        bg2: "#2a3849",
-                        text: "#f0f0f0",
-                        textMuted: "#a0aec0"
-                    },
-                    {
-                        name: "Blue",
-                        color1: "#3498db",
-                        color2: "#2980b9",
-                        bg1: "#0f1c2e",
-                        bg2: "#1f2d3d",
-                        text: "#e3f2fd",
-                        textMuted: "#90caf9"
-                    },
-                    {
-                        name: "Purple",
-                        color1: "#9b59b6",
-                        color2: "#8e44ad",
-                        bg1: "#1a1a2e",
-                        bg2: "#2a2a3e",
-                        text: "#f3e5f5",
-                        textMuted: "#ce93d8"
-                    },
-                    {
-                        name: "Teal",
-                        color1: "#1abc9c",
-                        color2: "#16a085",
-                        bg1: "#0d2429",
-                        bg2: "#1d3439",
-                        text: "#e0f2f1",
-                        textMuted: "#80cbc4"
-                    },
-                    {
-                        name: "Red",
-                        color1: "#e74c3c",
-                        color2: "#c0392b",
-                        bg1: "#2c0f0f",
-                        bg2: "#3c1f1f",
-                        text: "#ffebee",
-                        textMuted: "#ef9a9a"
-                    },
-                    {
-                        name: "Orange",
-                        color1: "#e67e22",
-                        color2: "#d35400",
-                        bg1: "#2a1a0a",
-                        bg2: "#3a2a1a",
-                        text: "#fff3e0",
-                        textMuted: "#ffcc80"
-                    },
-                    {
-                        name: "Yellow",
-                        color1: "#f1c40f",
-                        color2: "#f39c12",
-                        bg1: "#2a240a",
-                        bg2: "#3a341a",
-                        text: "#fffde7",
-                        textMuted: "#fff59d"
-                    },
-                    {
-                        name: "Pink",
-                        color1: "#fd79a8",
-                        color2: "#e84393",
-                        bg1: "#2a0f1a",
-                        bg2: "#3a1f2a",
-                        text: "#fce4ec",
-                        textMuted: "#f48fb1"
-                    },
-                    {
-                        name: "Cyan",
-                        color1: "#00cec9",
-                        color2: "#00b894",
-                        bg1: "#0a242a",
-                        bg2: "#1a343a",
-                        text: "#e0f7fa",
-                        textMuted: "#80deea"
-                    },
-                    {
-                        name: "Slate",
-                        color1: "#636e72",
-                        color2: "#2d3436",
-                        bg1: "#1a1a1a",
-                        bg2: "#2a2a2a",
-                        text: "#f5f5f5",
-                        textMuted: "#bdbdbd"
-                    }
+                    { name: "Green", color1: "#2ecc71", color2: "#27ae60", bg1: "#16222a", bg2: "#2a3849", text: "#f0f0f0", textMuted: "#a0aec0" },
+                    { name: "Blue", color1: "#3498db", color2: "#2980b9", bg1: "#0f1c2e", bg2: "#1f2d3d", text: "#e3f2fd", textMuted: "#90caf9" },
+                    { name: "Purple", color1: "#9b59b6", color2: "#8e44ad", bg1: "#1a1a2e", bg2: "#2a2a3e", text: "#f3e5f5", textMuted: "#ce93d8" },
+                    { name: "Teal", color1: "#1abc9c", color2: "#16a085", bg1: "#0d2429", bg2: "#1d3439", text: "#e0f2f1", textMuted: "#80cbc4" },
+                    { name: "Red", color1: "#e74c3c", color2: "#c0392b", bg1: "#2c0f0f", bg2: "#3c1f1f", text: "#ffebee", textMuted: "#ef9a9a" },
+                    { name: "Orange", color1: "#e67e22", color2: "#d35400", bg1: "#2a1a0a", bg2: "#3a2a1a", text: "#fff3e0", textMuted: "#ffcc80" },
+                    { name: "Yellow", color1: "#f1c40f", color2: "#f39c12", bg1: "#2a240a", bg2: "#3a341a", text: "#fffde7", textMuted: "#fff59d" },
+                    { name: "Pink", color1: "#fd79a8", color2: "#e84393", bg1: "#2a0f1a", bg2: "#3a1f2a", text: "#fce4ec", textMuted: "#f48fb1" },
+                    { name: "Cyan", color1: "#00cec9", color2: "#00b894", bg1: "#0a242a", bg2: "#1a343a", text: "#e0f7fa", textMuted: "#80deea" },
+                    { name: "Slate", color1: "#636e72", color2: "#2d3436", bg1: "#1a1a1a", bg2: "#2a2a2a", text: "#f5f5f5", textMuted: "#bdbdbd" }
                 ];
                 
                 const container = document.getElementById('theme-selection-content');
@@ -2648,7 +2613,6 @@
                         applyTheme(theme);
                         closeModal('theme-modal');
                         showStatus(`Theme changed to ${theme.name}`, 'success');
-                        
                         document.querySelectorAll('.theme-card').forEach(card => {
                             card.style.border = '2px solid transparent';
                         });
@@ -2670,7 +2634,6 @@
                     <div style="font-weight: 600; color: var(--accent-color-1); margin-bottom: 5px;">Current Theme: ${selectedTheme.name}</div>
                     <div style="font-size: 0.85rem; color: var(--text-muted);">The theme affects all colors and visual elements of the application.</div>
                 `;
-                
                 container.appendChild(currentThemeInfo);
             }
             
@@ -2688,11 +2651,9 @@
                 const base = hexToRgb(baseColor);
                 const mix = hexToRgb(mixColor);
                 const p = percentage / 100;
-                
                 const r = Math.round(base.r * (1-p) + mix.r * p);
                 const g = Math.round(base.g * (1-p) + mix.g * p);
                 const b = Math.round(base.b * (1-p) + mix.b * p);
-                
                 return `rgb(${r}, ${g}, ${b})`;
             }
             
@@ -2990,32 +2951,16 @@
                 if (medicines.length > 0) {
                     allData.push(["MEDICATION LIST"]);
                     allData.push(["Medicine Name", "Dosage (mg)", "Due Time / Frequency"]);
-                    
                     medicines.forEach((med) => {
-                        allData.push([
-                            med.name || "",
-                            med.mg || "",
-                            med.due || ""
-                        ]);
+                        allData.push([med.name || "", med.mg || "", med.due || ""]);
                     });
-                    
                     allData.push([`Total Medicines: ${medicines.length}`]);
                     allData.push([""]);
                 }
                 
                 if (bpReadings.length > 0) {
                     allData.push(["BLOOD PRESSURE & ECG READINGS"]);
-                    allData.push([
-                        "Date", 
-                        "Time", 
-                        "Systolic", 
-                        "Diastolic", 
-                        "Pulse", 
-                        "Sitting Down",
-                        "Standing Up",
-                        "ECG Monitor",
-                        "Type Diagnosis"
-                    ]);
+                    allData.push(["Date", "Time", "Systolic", "Diastolic", "Pulse", "Sitting Down", "Standing Up", "ECG Monitor", "Type Diagnosis"]);
                     
                     const sortedReadings = [...bpReadings].sort((a, b) => {
                         const dateCompare = new Date(b.date) - new Date(a.date);
@@ -3024,17 +2969,7 @@
                     });
                     
                     sortedReadings.forEach(reading => {
-                        allData.push([
-                            reading.date || "",
-                            reading.time || "",
-                            reading.systolic || "",
-                            reading.diastolic || "",
-                            reading.pulse || "",
-                            reading.sittingDown || "",
-                            reading.standingUp || "",
-                            reading.ecgMonitor || "",
-                            reading.typeDiagnosis || ""
-                        ]);
+                        allData.push([reading.date || "", reading.time || "", reading.systolic || "", reading.diastolic || "", reading.pulse || "", reading.sittingDown || "", reading.standingUp || "", reading.ecgMonitor || "", reading.typeDiagnosis || ""]);
                     });
                     
                     allData.push([`Total BP Readings: ${bpReadings.length}`]);
@@ -3044,7 +2979,6 @@
                 if (generalNotes.length) {
                     allData.push(["GENERAL NOTES"]);
                     allData.push(["Date", "Type of Operation", "Notes"]);
-                    
                     generalNotes.forEach(n => {
                         allData.push([n.date || '', n.type || '', n.notes || '']);
                     });
@@ -3058,30 +2992,17 @@
                 allData.push(["Surgery/Clinic", surgeryDetails.name || "Not specified"]);
                 allData.push(["Medicines Count", medicines.length]);
                 allData.push(["BP Readings Count", bpReadings.length]);
-                allData.push(["Has General Notes", generalNotes.content ? "Yes" : "No"]);
+                allData.push(["Has General Notes", generalNotes.length ? "Yes" : "No"]);
                 allData.push(["Report Generated", new Date().toLocaleString()]);
                 allData.push([""]);
                 allData.push(["End of Report"]);
                 
                 const ws = XLSX.utils.aoa_to_sheet(allData);
-                
-                const wscols = [
-                    {wch: 25},
-                    {wch: 30},
-                    {wch: 20},
-                    {wch: 15},
-                    {wch: 15},
-                    {wch: 15},
-                    {wch: 15},
-                    {wch: 20},
-                    {wch: 20}
-                ];
+                const wscols = [{wch:25},{wch:30},{wch:20},{wch:15},{wch:15},{wch:15},{wch:15},{wch:20},{wch:20}];
                 ws['!cols'] = wscols;
                 
                 XLSX.utils.book_append_sheet(wb, ws, "Medical Report");
-                
-                const fileName = `patient-medical-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
-                XLSX.writeFile(wb, fileName);
+                XLSX.writeFile(wb, `patient-medical-report-${new Date().toISOString().slice(0, 10)}.xlsx`);
                 
                 showStatus('Excel report exported successfully!', 'success');
                 closeModal('data-modal');
@@ -3094,24 +3015,12 @@
                 }
                 
                 const wb = XLSX.utils.book_new();
-                
                 const header = [["Medicine Name", "Dosage (mg)", "Due Time / Frequency"]];
                 const medicineData = medicines.map(m => [m.name || '', m.mg || '', m.due || '']);
-                const allData = header.concat(medicineData);
-                
-                const medicineWs = XLSX.utils.aoa_to_sheet(allData);
-                
-                const wscols = [
-                    {wch: 30},
-                    {wch: 15},
-                    {wch: 25}
-                ];
-                medicineWs['!cols'] = wscols;
-                
+                const medicineWs = XLSX.utils.aoa_to_sheet(header.concat(medicineData));
+                medicineWs['!cols'] = [{wch:30},{wch:15},{wch:25}];
                 XLSX.utils.book_append_sheet(wb, medicineWs, 'Medicines');
-                
-                const fileName = `patient-medicines-${new Date().toISOString().slice(0, 10)}.xlsx`;
-                XLSX.writeFile(wb, fileName);
+                XLSX.writeFile(wb, `patient-medicines-${new Date().toISOString().slice(0, 10)}.xlsx`);
                 
                 showStatus('Medicines exported to Excel!', 'success');
                 closeAllDropdowns();
@@ -3124,46 +3033,13 @@
                 }
                 
                 const wb = XLSX.utils.book_new();
-                
                 const header = [["Date", "Time", "Systolic", "Diastolic", "Pulse", "Sitting Down", "Standing Up", "ECG Monitor", "Type Diagnosis"]];
-                const bpData = bpReadings.map(r => [
-                    r.date || '',
-                    r.time || '',
-                    r.systolic || '',
-                    r.diastolic || '',
-                    r.pulse || '',
-                    r.sittingDown || '',
-                    r.standingUp || '',
-                    r.ecgMonitor || '',
-                    r.typeDiagnosis || ''
-                ]);
-                
-                const sortedData = bpData.sort((a, b) => {
-                    const dateCompare = new Date(b[0]) - new Date(a[0]);
-                    if (dateCompare !== 0) return dateCompare;
-                    return b[1] - a[1];
-                });
-                
-                const allData = header.concat(sortedData);
-                const bpWs = XLSX.utils.aoa_to_sheet(allData);
-                
-                const wscols = [
-                    {wch: 12},
-                    {wch: 10},
-                    {wch: 10},
-                    {wch: 10},
-                    {wch: 8},
-                    {wch: 15},
-                    {wch: 15},
-                    {wch: 20},
-                    {wch: 20}
-                ];
-                bpWs['!cols'] = wscols;
-                
+                const bpData = bpReadings.map(r => [r.date||'', r.time||'', r.systolic||'', r.diastolic||'', r.pulse||'', r.sittingDown||'', r.standingUp||'', r.ecgMonitor||'', r.typeDiagnosis||'']);
+                const sortedData = bpData.sort((a, b) => { const dc = new Date(b[0]) - new Date(a[0]); return dc !== 0 ? dc : b[1] - a[1]; });
+                const bpWs = XLSX.utils.aoa_to_sheet(header.concat(sortedData));
+                bpWs['!cols'] = [{wch:12},{wch:10},{wch:10},{wch:10},{wch:8},{wch:15},{wch:15},{wch:20},{wch:20}];
                 XLSX.utils.book_append_sheet(wb, bpWs, 'Blood Pressure');
-                
-                const fileName = `patient-bp-readings-${new Date().toISOString().slice(0, 10)}.xlsx`;
-                XLSX.writeFile(wb, fileName);
+                XLSX.writeFile(wb, `patient-bp-readings-${new Date().toISOString().slice(0, 10)}.xlsx`);
                 
                 showStatus('BP readings exported to Excel!', 'success');
                 closeAllDropdowns();
@@ -3183,7 +3059,6 @@
                             bpReadings = data.bpReadings;
                             
                             if (data.generalNotes) {
-                                // Support both new array format and old object format
                                 generalNotes = Array.isArray(data.generalNotes) ? data.generalNotes : [];
                                 localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
                             } else if (data.bpNotes) {
@@ -3238,10 +3113,7 @@
                     bpReadings = [];
                     generalNotes = [];
                     surgeryDetails = {};
-                    patientDetails = { 
-                        name: "PATIENT",
-                        dob: ""
-                    };
+                    patientDetails = { name: "PATIENT", dob: "" };
                     
                     localStorage.setItem('patient-medicines', JSON.stringify(medicines));
                     localStorage.setItem('patient-bp-readings', JSON.stringify(bpReadings));
@@ -3249,30 +3121,8 @@
                     localStorage.setItem('patient-surgery-details', JSON.stringify(surgeryDetails));
                     localStorage.setItem('patient-patient-details', JSON.stringify(patientDetails));
                     
-                    document.getElementById('surgery-doctor').value = '';
-                    document.getElementById('surgery-name').value = '';
-                    document.getElementById('surgery-phone').value = '';
-                    document.getElementById('surgery-house').value = '';
-                    document.getElementById('surgery-line1').value = '';
-                    document.getElementById('surgery-line2').value = '';
-                    document.getElementById('surgery-town').value = '';
-                    document.getElementById('surgery-county').value = '';
-                    document.getElementById('surgery-postcode').value = '';
-                    
-                    document.getElementById('patient-phone').value = '';
-                    document.getElementById('patient-nhs').value = '';
-                    document.getElementById('patient-hospital').value = '';
-                    document.getElementById('patient-dob').value = '';
-                    document.getElementById('patient-next-kin-name').value = '';
-                    document.getElementById('patient-next-kin-phone').value = '';
-                    document.getElementById('patient-house').value = '';
-                    document.getElementById('patient-line1').value = '';
-                    document.getElementById('patient-line2').value = '';
-                    document.getElementById('patient-town').value = '';
-                    document.getElementById('patient-county').value = '';
-                    document.getElementById('patient-postcode').value = '';
-                    
-                    document.getElementById('general-notes-textarea').value = '';
+                    ['surgery-doctor','surgery-name','surgery-phone','surgery-house','surgery-line1','surgery-line2','surgery-town','surgery-county','surgery-postcode'].forEach(id => document.getElementById(id).value = '');
+                    ['patient-phone','patient-nhs','patient-hospital','patient-dob','patient-next-kin-name','patient-next-kin-phone','patient-house','patient-line1','patient-line2','patient-town','patient-county','patient-postcode'].forEach(id => document.getElementById(id).value = '');
                     
                     loadSurgeryDetails();
                     loadPatientDetails();
@@ -3310,10 +3160,7 @@
                 statusEl.textContent = message;
                 statusEl.className = `status-message status-${type}`;
                 statusEl.style.display = 'flex';
-                
-                setTimeout(() => {
-                    statusEl.style.display = 'none';
-                }, 4000);
+                setTimeout(() => { statusEl.style.display = 'none'; }, 4000);
             }
             
             function toggleMainControlsDropdown() {
@@ -3347,25 +3194,13 @@
             }
             
             function closeAllDropdowns() {
-                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                });
-                document.querySelectorAll('.header-dropdown-content').forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                });
+                document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.header-dropdown-content').forEach(d => d.classList.remove('show'));
             }
             
             function closeOtherDropdowns(exceptId) {
-                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
-                    if (dropdown.id !== exceptId) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-                document.querySelectorAll('.header-dropdown-content').forEach(dropdown => {
-                    if (dropdown.id !== exceptId) {
-                        dropdown.classList.remove('show');
-                    }
-                });
+                document.querySelectorAll('.dropdown-content').forEach(d => { if (d.id !== exceptId) d.classList.remove('show'); });
+                document.querySelectorAll('.header-dropdown-content').forEach(d => { if (d.id !== exceptId) d.classList.remove('show'); });
             }
             
             window.updateMedicine = updateMedicine;
@@ -3374,6 +3209,7 @@
             window.deleteBPReading = deleteBPReading;
             window.deleteGeneralNote = deleteGeneralNote;
             window.updateGeneralNote = updateGeneralNote;
+            window.toggleGeneralNotesSort = toggleGeneralNotesSort;
             window.editSurgeryDetails = editSurgeryDetails;
             window.deleteSurgeryDetails = deleteSurgeryDetails;
             window.editPatientDetails = editPatientDetails;
