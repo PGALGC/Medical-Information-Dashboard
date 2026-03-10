@@ -2878,10 +2878,14 @@
                 captureText += "OTHER MEDICAL INFORMATION\n";
                 captureText += "-".repeat(40) + "\n";
                 if (otherMedicalInfo.length > 0) {
-                    captureText += `${"Date".padEnd(12)} ${"Allergies".padEnd(20)} ${"Height".padEnd(12)} ${"Weight".padEnd(12)} Other\n`;
-                    captureText += "-".repeat(80) + "\n";
-                    otherMedicalInfo.forEach(row => {
-                        captureText += `${(row.date || '').padEnd(12)} ${(row.allergies || '').padEnd(20)} ${(row.height || '').padEnd(12)} ${(row.weight || '').padEnd(12)} ${row.other || ''}\n`;
+                    otherMedicalInfo.forEach((row, index) => {
+                        if (index > 0) captureText += "\n";
+                        captureText += `Date:      ${row.date || 'Not provided'}\n`;
+                        captureText += `Allergies: ${row.allergies || 'Not provided'}\n`;
+                        captureText += `Height:    ${row.height || 'Not provided'}\n`;
+                        captureText += `Weight:    ${row.weight || 'Not provided'}\n`;
+                        captureText += `Other:     ${row.other || 'Not provided'}\n`;
+                        captureText += "-".repeat(40) + "\n";
                     });
                 } else {
                     captureText += "No other medical information recorded.\n";
