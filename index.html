@@ -2148,9 +2148,11 @@
                 noData.style.display = 'none';
                 otherMedicalInfo.forEach(row => {
                     const card = document.createElement('div');
-                    card.style.cssText = 'border:1px solid var(--border-color);border-radius:6px;padding:12px 15px;margin-bottom:12px;background:linear-gradient(145deg,color-mix(in srgb,var(--secondary-dark) 90%,var(--accent-color-1) 5%),color-mix(in srgb,var(--secondary-dark) 90%,var(--accent-color-2) 5%));position:relative;';
+                    card.style.cssText = 'border:1px solid var(--border-color);border-radius:6px;padding:12px 15px;margin-bottom:12px;background:linear-gradient(145deg,color-mix(in srgb,var(--secondary-dark) 90%,var(--accent-color-1) 5%),color-mix(in srgb,var(--secondary-dark) 90%,var(--accent-color-2) 5%));';
                     card.innerHTML = `
-                        <button class="delete-btn" onclick="deleteOtherMedicalRow(${row.id})" style="position:absolute;top:10px;right:10px;"><i class="fas fa-trash"></i></button>
+                        <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+                            <button class="delete-btn" onclick="deleteOtherMedicalRow(${row.id})"><i class="fas fa-trash"></i></button>
+                        </div>
                         <table style="width:100%;border-collapse:collapse;">
                             <tbody>
                                 <tr>
