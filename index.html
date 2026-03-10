@@ -1435,20 +1435,8 @@
                         </div>
                     </div>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table id="other-medical-table" style="min-width:700px;">
-                        <thead>
-                            <tr>
-                                <th style="width:130px;">DATE</th>
-                                <th style="width:180px;">ALLERGIES</th>
-                                <th style="width:100px;">HEIGHT</th>
-                                <th style="width:100px;">WEIGHT</th>
-                                <th>OTHER</th>
-                                <th style="width:60px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="other-medical-tbody"></tbody>
-                    </table>
+                <div>
+                    <div id="other-medical-tbody"></div>
                     <div id="no-other-medical" class="no-data">No entries recorded. Click "Add Row" to start.</div>
                 </div>
             </section>
@@ -2150,25 +2138,45 @@
             }
 
             function renderOtherMedicalInfo() {
-                const tbody = document.getElementById('other-medical-tbody');
+                const container = document.getElementById('other-medical-tbody');
                 const noData = document.getElementById('no-other-medical');
-                tbody.innerHTML = '';
+                container.innerHTML = '';
                 if (!otherMedicalInfo.length) {
                     noData.style.display = 'block';
                     return;
                 }
                 noData.style.display = 'none';
                 otherMedicalInfo.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><input type="date" value="${row.date||''}" onchange="updateOtherMedicalRow(${row.id},'date',this.value)"></td>
-                        <td><input type="text" value="${row.allergies||''}" placeholder="e.g. Penicillin" oninput="updateOtherMedicalRow(${row.id},'allergies',this.value)"></td>
-                        <td><input type="text" value="${row.height||''}" placeholder="e.g. 5ft 10in" oninput="updateOtherMedicalRow(${row.id},'height',this.value)"></td>
-                        <td><input type="text" value="${row.weight||''}" placeholder="e.g. 75kg" oninput="updateOtherMedicalRow(${row.id},'weight',this.value)"></td>
-                        <td><input type="text" value="${row.other||''}" placeholder="Additional notes" oninput="updateOtherMedicalRow(${row.id},'other',this.value)"></td>
-                        <td><button class="delete-btn" onclick="deleteOtherMedicalRow(${row.id})"><i class="fas fa-trash"></i></button></td>
+                    const card = document.createElement('div');
+                    card.style.cssText = 'border:1px solid var(--border-color);border-radius:6px;padding:12px 15px;margin-bottom:12px;background:linear-gradient(145deg,color-mix(in srgb,var(--secondary-dark) 90%,var(--accent-color-1) 5%),color-mix(in srgb,var(--secondary-dark) 90%,var(--accent-color-2) 5%));position:relative;';
+                    card.innerHTML = `
+                        <button class="delete-btn" onclick="deleteOtherMedicalRow(${row.id})" style="position:absolute;top:10px;right:10px;"><i class="fas fa-trash"></i></button>
+                        <table style="width:100%;border-collapse:collapse;">
+                            <tbody>
+                                <tr>
+                                    <td style="padding:7px 0;width:110px;font-size:0.82rem;font-weight:600;color:var(--text-muted);vertical-align:middle;">Date</td>
+                                    <td style="padding:7px 0;"><input type="date" value="${row.date||''}" onchange="updateOtherMedicalRow(${row.id},'date',this.value)" style="max-width:200px;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:7px 0;font-size:0.82rem;font-weight:600;color:var(--text-muted);vertical-align:middle;">Allergies</td>
+                                    <td style="padding:7px 0;"><input type="text" value="${row.allergies||''}" placeholder="e.g. Penicillin" oninput="updateOtherMedicalRow(${row.id},'allergies',this.value)"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:7px 0;font-size:0.82rem;font-weight:600;color:var(--text-muted);vertical-align:middle;">Height</td>
+                                    <td style="padding:7px 0;"><input type="text" value="${row.height||''}" placeholder="e.g. 5ft 10in" oninput="updateOtherMedicalRow(${row.id},'height',this.value)"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:7px 0;font-size:0.82rem;font-weight:600;color:var(--text-muted);vertical-align:middle;">Weight</td>
+                                    <td style="padding:7px 0;"><input type="text" value="${row.weight||''}" placeholder="e.g. 75kg" oninput="updateOtherMedicalRow(${row.id},'weight',this.value)"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:7px 0;font-size:0.82rem;font-weight:600;color:var(--text-muted);vertical-align:middle;">Other</td>
+                                    <td style="padding:7px 0;"><input type="text" value="${row.other||''}" placeholder="Additional notes" oninput="updateOtherMedicalRow(${row.id},'other',this.value)"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     `;
-                    tbody.appendChild(tr);
+                    container.appendChild(card);
                 });
             }
             
