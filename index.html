@@ -1416,19 +1416,64 @@
             <section class="section">
                 <div class="section-title">
                     <div class="section-title-left">
+                        <i class="fas fa-notes-medical"></i>
+                        <h2>Other Medical Information</h2>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <button class="btn btn-primary btn-sm" id="add-other-medical-btn">
+                            <i class="fas fa-plus"></i> Add Row
+                        </button>
+                        <div class="dropdown-container">
+                            <button class="dropdown-btn" id="other-medical-dropdown-btn">
+                                <i class="fas fa-cog"></i> Options
+                            </button>
+                            <div class="dropdown-content" id="other-medical-dropdown">
+                                <div class="dropdown-item" id="clear-other-medical" style="color:#e74c3c;">
+                                    <i class="fas fa-trash"></i> Clear All Rows
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table id="other-medical-table" style="min-width:700px;">
+                        <thead>
+                            <tr>
+                                <th style="width:130px;">DATE</th>
+                                <th style="width:180px;">ALLERGIES</th>
+                                <th style="width:100px;">HEIGHT</th>
+                                <th style="width:100px;">WEIGHT</th>
+                                <th>OTHER</th>
+                                <th style="width:60px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="other-medical-tbody"></tbody>
+                    </table>
+                    <div id="no-other-medical" class="no-data">No entries recorded. Click "Add Row" to start.</div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-title">
+                    <div class="section-title-left">
                         <i class="fas fa-heartbeat"></i>
                         <h2>Blood Pressure & ECG Readings</h2>
                     </div>
-                    <div class="dropdown-container">
-                        <button class="dropdown-btn" id="bp-dropdown-btn">
-                            <i class="fas fa-cog"></i> Options
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <button class="btn btn-primary btn-sm" id="add-bp-btn">
+                            <i class="fas fa-plus"></i> Add BP Reading
                         </button>
-                        <div class="dropdown-content" id="bp-dropdown">
-                            <div class="dropdown-item" id="export-bp-excel">
-                                <i class="fas fa-file-excel"></i> Export BP Readings to Excel
-                            </div>
-                            <div class="dropdown-item" id="clear-bp">
-                                <i class="fas fa-trash"></i> Clear All BP Readings
+                        <div class="dropdown-container">
+                            <button class="dropdown-btn" id="bp-dropdown-btn">
+                                <i class="fas fa-cog"></i> Options
+                            </button>
+                            <div class="dropdown-content" id="bp-dropdown">
+                                <div class="dropdown-item" id="export-bp-excel">
+                                    <i class="fas fa-file-excel"></i> Export BP Readings to Excel
+                                </div>
+                                <div class="dropdown-item" id="clear-bp">
+                                    <i class="fas fa-trash"></i> Clear All BP Readings
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1487,11 +1532,6 @@
                     </div>
                 </div>
                 
-                <div class="button-container" style="margin-top: 15px;">
-                    <button class="btn btn-primary" id="add-bp-btn">
-                        <i class="fas fa-plus"></i> Add BP Reading
-                    </button>
-                </div>
             </section>
         </div>
         
@@ -1867,6 +1907,7 @@
             
             let medicines = JSON.parse(localStorage.getItem('patient-medicines')) || [];
             let bpReadings = JSON.parse(localStorage.getItem('patient-bp-readings')) || [];
+            let otherMedicalInfo = JSON.parse(localStorage.getItem('patient-other-medical')) || [];
             let generalNotesRaw = JSON.parse(localStorage.getItem('patient-general-notes'));
             // Backward compat: old format was an object {content, lastUpdated}
             let generalNotes = Array.isArray(generalNotesRaw) ? generalNotesRaw : [];
@@ -1895,12 +1936,28 @@
             loadGeneralNotes();
             renderMedicines();
             renderBPReadings();
+            renderOtherMedicalInfo();
             
             document.getElementById('add-medicine-btn').addEventListener('click', addMedicineRow);
             document.getElementById('add-bp-btn').addEventListener('click', addBPReadingRow);
             document.getElementById('save-surgery-btn').addEventListener('click', saveSurgeryDetails);
             document.getElementById('save-patient-btn').addEventListener('click', savePatientDetails);
             document.getElementById('add-general-note-btn').addEventListener('click', addGeneralNoteRow);
+            document.getElementById('add-other-medical-btn').addEventListener('click', addOtherMedicalRow);
+            document.getElementById('other-medical-dropdown-btn').addEventListener('click', function() {
+                const dd = document.getElementById('other-medical-dropdown');
+                dd.classList.toggle('show');
+                closeOtherDropdowns('other-medical-dropdown');
+            });
+            document.getElementById('clear-other-medical').addEventListener('click', function() {
+                if (confirm('Clear all Other Medical Information rows? This cannot be undone.')) {
+                    otherMedicalInfo = [];
+                    saveOtherMedicalInfo();
+                    renderOtherMedicalInfo();
+                    showStatus('All rows cleared', 'success');
+                    closeAllDropdowns();
+                }
+            });
             document.getElementById('header-how-to').addEventListener('click', function() {
                 closeAllDropdowns();
                 document.getElementById('howto-modal').style.display = 'block';
@@ -2060,6 +2117,61 @@
             function saveGeneralNotes() {
                 localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
             }
+
+            // ── Other Medical Information ──
+            function addOtherMedicalRow() {
+                const today = new Date().toISOString().split('T')[0];
+                const newRow = { id: Date.now(), date: today, allergies: '', height: '', weight: '', other: '' };
+                otherMedicalInfo.push(newRow);
+                saveOtherMedicalInfo();
+                renderOtherMedicalInfo();
+                showStatus('New row added', 'success');
+            }
+
+            function saveOtherMedicalInfo() {
+                localStorage.setItem('patient-other-medical', JSON.stringify(otherMedicalInfo));
+            }
+
+            function deleteOtherMedicalRow(id) {
+                if (confirm('Delete this row?')) {
+                    otherMedicalInfo = otherMedicalInfo.filter(r => r.id !== id);
+                    saveOtherMedicalInfo();
+                    renderOtherMedicalInfo();
+                    showStatus('Row deleted', 'success');
+                }
+            }
+
+            function updateOtherMedicalRow(id, field, value) {
+                const row = otherMedicalInfo.find(r => r.id === id);
+                if (row) {
+                    row[field] = value;
+                    saveOtherMedicalInfo();
+                }
+            }
+
+            function renderOtherMedicalInfo() {
+                const tbody = document.getElementById('other-medical-tbody');
+                const noData = document.getElementById('no-other-medical');
+                tbody.innerHTML = '';
+                if (!otherMedicalInfo.length) {
+                    noData.style.display = 'block';
+                    return;
+                }
+                noData.style.display = 'none';
+                otherMedicalInfo.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="date" value="${row.date||''}" onchange="updateOtherMedicalRow(${row.id},'date',this.value)"></td>
+                        <td><input type="text" value="${row.allergies||''}" placeholder="e.g. Penicillin" oninput="updateOtherMedicalRow(${row.id},'allergies',this.value)"></td>
+                        <td><input type="text" value="${row.height||''}" placeholder="e.g. 5ft 10in" oninput="updateOtherMedicalRow(${row.id},'height',this.value)"></td>
+                        <td><input type="text" value="${row.weight||''}" placeholder="e.g. 75kg" oninput="updateOtherMedicalRow(${row.id},'weight',this.value)"></td>
+                        <td><input type="text" value="${row.other||''}" placeholder="Additional notes" oninput="updateOtherMedicalRow(${row.id},'other',this.value)"></td>
+                        <td><button class="delete-btn" onclick="deleteOtherMedicalRow(${row.id})"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+            
             
             function deleteGeneralNote(id) {
                 if (confirm('Delete this note?')) {
@@ -2877,6 +2989,7 @@
                     medicines: medicines,
                     bpReadings: bpReadings,
                     generalNotes: generalNotes,
+                    otherMedicalInfo: otherMedicalInfo,
                     surgeryDetails: surgeryDetails,
                     patientDetails: patientDetails,
                     selectedTheme: selectedTheme,
@@ -3088,6 +3201,11 @@
                                 initThemeModal();
                             }
                             
+                            if (data.otherMedicalInfo) {
+                                otherMedicalInfo = Array.isArray(data.otherMedicalInfo) ? data.otherMedicalInfo : [];
+                                saveOtherMedicalInfo();
+                            }
+                            
                             saveMedicines();
                             saveBPReadings();
                             loadSurgeryDetails();
@@ -3095,6 +3213,7 @@
                             loadGeneralNotes();
                             renderMedicines();
                             renderBPReadings();
+                            renderOtherMedicalInfo();
                             
                             showStatus('Data restored successfully!', 'success');
                         } else {
@@ -3125,6 +3244,8 @@
                     localStorage.setItem('patient-general-notes', JSON.stringify(generalNotes));
                     localStorage.setItem('patient-surgery-details', JSON.stringify(surgeryDetails));
                     localStorage.setItem('patient-patient-details', JSON.stringify(patientDetails));
+                    otherMedicalInfo = [];
+                    saveOtherMedicalInfo();
                     
                     ['surgery-doctor','surgery-name','surgery-phone','surgery-house','surgery-line1','surgery-line2','surgery-town','surgery-county','surgery-postcode'].forEach(id => document.getElementById(id).value = '');
                     ['patient-phone','patient-nhs','patient-hospital','patient-dob','patient-next-kin-name','patient-next-kin-phone','patient-house','patient-line1','patient-line2','patient-town','patient-county','patient-postcode'].forEach(id => document.getElementById(id).value = '');
@@ -3134,6 +3255,7 @@
                     loadGeneralNotes();
                     renderMedicines();
                     renderBPReadings();
+                    renderOtherMedicalInfo();
                     
                     showStatus('All data cleared', 'success');
                     closeModal('data-modal');
@@ -3219,6 +3341,8 @@
             window.deleteSurgeryDetails = deleteSurgeryDetails;
             window.editPatientDetails = editPatientDetails;
             window.deletePatientDetails = deletePatientDetails;
+            window.updateOtherMedicalRow = updateOtherMedicalRow;
+            window.deleteOtherMedicalRow = deleteOtherMedicalRow;
         });
     </script>
 </body>
