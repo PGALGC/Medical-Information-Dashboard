@@ -2867,6 +2867,19 @@
                 }
                 
                 captureText += "\n" + "-".repeat(40) + "\n";
+                captureText += "OTHER MEDICAL INFORMATION\n";
+                captureText += "-".repeat(40) + "\n";
+                if (otherMedicalInfo.length > 0) {
+                    captureText += `${"Date".padEnd(12)} ${"Allergies".padEnd(20)} ${"Height".padEnd(12)} ${"Weight".padEnd(12)} Other\n`;
+                    captureText += "-".repeat(80) + "\n";
+                    otherMedicalInfo.forEach(row => {
+                        captureText += `${(row.date || '').padEnd(12)} ${(row.allergies || '').padEnd(20)} ${(row.height || '').padEnd(12)} ${(row.weight || '').padEnd(12)} ${row.other || ''}\n`;
+                    });
+                } else {
+                    captureText += "No other medical information recorded.\n";
+                }
+
+                captureText += "\n" + "-".repeat(40) + "\n";
                 captureText += "GENERAL NOTES\n";
                 captureText += "-".repeat(40) + "\n";
                 if (generalNotes.length) {
@@ -2892,6 +2905,7 @@
                 captureText += `Surgery/Clinic: ${surgeryDetails.name || "Not specified"}\n`;
                 captureText += `Medicines Count: ${medicines.length}\n`;
                 captureText += `BP Readings Count: ${bpReadings.length}\n`;
+                captureText += `Other Medical Info Rows: ${otherMedicalInfo.length}\n`;
                 captureText += `Has General Notes: ${generalNotes.length ? "Yes" : "No"}\n`;
                 captureText += `Last Updated: ${new Date().toLocaleString()}\n`;
                 
@@ -3094,6 +3108,15 @@
                     allData.push([""]);
                 }
                 
+                if (otherMedicalInfo.length > 0) {
+                    allData.push(["OTHER MEDICAL INFORMATION"]);
+                    allData.push(["Date", "Allergies", "Height", "Weight", "Other"]);
+                    otherMedicalInfo.forEach(row => {
+                        allData.push([row.date || '', row.allergies || '', row.height || '', row.weight || '', row.other || '']);
+                    });
+                    allData.push([""]);
+                }
+                
                 if (generalNotes.length) {
                     allData.push(["GENERAL NOTES"]);
                     allData.push(["Date", "Type of Operation", "Notes"]);
@@ -3110,6 +3133,7 @@
                 allData.push(["Surgery/Clinic", surgeryDetails.name || "Not specified"]);
                 allData.push(["Medicines Count", medicines.length]);
                 allData.push(["BP Readings Count", bpReadings.length]);
+                allData.push(["Other Medical Info Rows", otherMedicalInfo.length]);
                 allData.push(["Has General Notes", generalNotes.length ? "Yes" : "No"]);
                 allData.push(["Report Generated", new Date().toLocaleString()]);
                 allData.push([""]);
