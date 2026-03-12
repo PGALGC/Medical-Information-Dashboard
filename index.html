@@ -2788,175 +2788,206 @@
             function buildCaptureHTML() {
                 // ── helpers ──────────────────────────────────────────────
                 const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-                const val = v => esc(v) || '<span class="nd">Not provided</span>';
+                const val = v => esc(v) || '<span class="nd">—</span>';
                 const noData = msg => `<tr><td colspan="99" class="no-data-row">${msg}</td></tr>`;
 
-                // ── surgery address ───────────────────────────────────────
-                let surgAddr = '';
-                if (surgeryDetails.address) {
+                // ── surgery address ─────────────────────────────────
+                const surgAddr = (() => {
+                    if (!surgeryDetails.address) return '';
                     const a = surgeryDetails.address;
                     const parts = [a.house, a.line1, a.line2, a.town, a.county, a.postcode].filter(Boolean);
-                    if (parts.length) surgAddr = `<div class="addr-block"><i>📍</i> ${parts.map(esc).join(', ')}</div>`;
-                }
+                    return parts.length ? `<div class="addr-block">📍 Surgery Address: ${parts.map(esc).join(', ')}</div>` : '';
+                })();
 
-                // ── patient address ───────────────────────────────────────
-                let patAddr = '';
-                if (patientDetails.address) {
+                // ── patient address ──────────────────────────────────────
+                const patAddr = (() => {
+                    if (!patientDetails.address) return '';
                     const a = patientDetails.address;
                     const parts = [a.house, a.line1, a.line2, a.town, a.county, a.postcode].filter(Boolean);
-                    if (parts.length) patAddr = `<div class="addr-block"><i>🏠</i> ${parts.map(esc).join(', ')}</div>`;
-                }
+                    return parts.length ? `<div class="addr-block">🏠 Patient Address: ${parts.map(esc).join(', ')}</div>` : '';
+                })();
 
-                // ── medicines rows ────────────────────────────────────────
-                let medRows = medicines.length
+                // ── medicines rows ───────────────────────────────────────
+                const medRows = medicines.length
                     ? medicines.map((m,i) => `<tr>
-                        <td>${i+1}</td>
+                        <td class="num">${i+1}</td>
                         <td>${val(m.name)}</td>
                         <td>${val(m.mg)}</td>
                         <td>${val(m.due)}</td>
                       </tr>`).join('')
                     : noData('No medicines recorded.');
 
-                // ── BP rows ───────────────────────────────────────────────
-                let bpRows = '';
-                if (bpReadings.length > 0) {
+                // ── BP rows ──────────────────────────────────────────────
+                const bpRows = (() => {
+                    if (!bpReadings.length) return noData('No blood pressure readings recorded.');
                     const sorted = [...bpReadings].sort((a,b) => {
                         const dc = new Date(b.date) - new Date(a.date);
                         return dc !== 0 ? dc : b.id - a.id;
                     });
-                    bpRows = sorted.map(r => `<tr>
-                        <td>${esc(r.date)}</td>
-                        <td>${esc(r.time)}</td>
-                        <td>${esc(r.systolic)||'N/A'}</td>
-                        <td>${esc(r.diastolic)||'N/A'}</td>
-                        <td>${esc(r.pulse)||'N/A'}</td>
+                    return sorted.map(r => `<tr>
+                        <td>${esc(r.date)||'—'}</td>
+                        <td>${esc(r.time)||'—'}</td>
+                        <td class="center">${esc(r.systolic)||'N/A'}</td>
+                        <td class="center">${esc(r.diastolic)||'N/A'}</td>
+                        <td class="center">${esc(r.pulse)||'N/A'}</td>
                         <td>${esc(r.sittingDown)||'N/A'}</td>
                         <td>${esc(r.standingUp)||'N/A'}</td>
                         <td>${esc(r.ecgMonitor)||'N/A'}</td>
                         <td>${esc(r.typeDiagnosis)||'N/A'}</td>
                       </tr>`).join('');
-                } else {
-                    bpRows = noData('No blood pressure readings recorded.');
-                }
+                })();
 
-                // ── other medical info rows ───────────────────────────────
-                let otherRows = otherMedicalInfo.length
-                    ? otherMedicalInfo.map(r => `<tr>
-                        <td>${esc(r.date)||'—'}</td>
-                        <td>${esc(r.allergies)||'—'}</td>
-                        <td>${esc(r.height)||'—'}</td>
-                        <td>${esc(r.weight)||'—'}</td>
-                        <td>${esc(r.other)||'—'}</td>
-                      </tr>`).join('')
-                    : noData('No other medical information recorded.');
+                // ── other medical info — vertical card per entry (mirrors app) ──
+                const otherCards = (() => {
+                    if (!otherMedicalInfo.length) return '<p class="no-data-p">No other medical information recorded.</p>';
+                    return otherMedicalInfo.map(r => `
+                      <div class="other-card">
+                        <div class="other-row"><span class="other-label">Date</span><span class="other-value">${esc(r.date)||'—'}</span></div>
+                        <div class="other-row"><span class="other-label">Allergies</span><span class="other-value">${esc(r.allergies)||'—'}</span></div>
+                        <div class="other-row"><span class="other-label">Height</span><span class="other-value">${esc(r.height)||'—'}</span></div>
+                        <div class="other-row"><span class="other-label">Weight</span><span class="other-value">${esc(r.weight)||'—'}</span></div>
+                        <div class="other-row last"><span class="other-label">Other</span><span class="other-value">${esc(r.other)||'—'}</span></div>
+                      </div>`).join('');
+                })();
 
-                // ── general notes rows ────────────────────────────────────
-                let noteRows = '';
-                if (generalNotes.length) {
+                // ── general notes rows ───────────────────────────────────
+                const noteRows = (() => {
+                    if (!generalNotes.length) return noData('No general notes recorded.');
                     const sorted = [...generalNotes].sort((a,b) => {
                         const da = a.date ? new Date(a.date) : new Date(0);
                         const db = b.date ? new Date(b.date) : new Date(0);
                         return da - db;
                     });
-                    noteRows = sorted.map(n => `<tr>
-                        <td>${esc(n.date)||'—'}</td>
+                    return sorted.map(n => `<tr>
+                        <td style="white-space:nowrap">${esc(n.date)||'—'}</td>
                         <td>${esc(n.type)||'—'}</td>
                         <td>${esc(n.notes)||'—'}</td>
                       </tr>`).join('');
-                } else {
-                    noteRows = noData('No general notes recorded.');
-                }
+                })();
 
-                // ── assemble HTML ─────────────────────────────────────────
-                return `
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+                // ── HTML ─────────────────────────────────────────────────
+                return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
 <title>Medical Information Summary</title>
 <style>
-  @page { size: A4 portrait; margin: 8mm; }
+  @page { size: A4 landscape; margin: 8mm; }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Arial, sans-serif; font-size: 7.5pt; color: #1a1a1a; background: #fff; }
 
-  /* ── header ── */
+  /* PAGE HEADER */
   .page-header {
-    background: linear-gradient(to right, #2ecc71, #27ae60);
-    color: white; padding: 7px 10px; border-radius: 5px;
+    background-color: #1a7a3c; color: #fff;
+    padding: 6px 10px; border-radius: 5px;
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 6px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  .page-header h1 { font-size: 11pt; }
-  .page-header .meta { font-size: 6.5pt; opacity: .9; text-align: right; }
+  .page-header h1 { font-size: 10.5pt; font-weight: 800; }
+  .page-header .meta { font-size: 6.5pt; text-align: right; line-height: 1.5; }
 
-  /* ── two-column profile row ── */
-  .profile-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-
-  /* ── section card ── */
+  /* SECTION CARD */
   .card {
-    border: 1px solid #c8e6c9;
-    border-top: 3px solid #2ecc71;
-    border-radius: 5px;
-    overflow: hidden;
+    border: 1px solid #b2dfcc; border-top: 3px solid #27ae60;
+    border-radius: 5px; margin-bottom: 6px; overflow: hidden;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .card-title {
-    background: #f1f8f4;
-    padding: 4px 8px;
-    font-size: 8pt;
-    font-weight: 700;
-    color: #1a5c34;
-    border-bottom: 1px solid #c8e6c9;
+    background-color: #1a7a3c; color: #fff;
+    padding: 4px 9px; font-size: 8pt; font-weight: 800; letter-spacing: 0.2px;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  .card-body { padding: 5px 8px; }
+  .card-body { padding: 6px 9px; }
 
-  /* ── info grid inside cards ── */
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
-  .info-row { display: flex; gap: 4px; align-items: baseline; font-size: 7pt; padding: 1px 0; }
-  .info-label { color: #555; white-space: nowrap; min-width: 80px; flex-shrink: 0; }
-  .info-value { color: #111; font-weight: 600; }
-  .nd { color: #999; font-weight: normal; font-style: italic; }
-  .addr-block { margin-top: 4px; padding: 3px 6px; background: #f7fdf9; border-left: 2px solid #2ecc71; font-size: 6.8pt; color: #333; border-radius: 2px; }
+  /* PROFILE ROW — side by side, equal height */
+  .profile-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; margin-bottom: 6px; align-items: stretch;
+  }
+  .profile-row > .card { display: flex; flex-direction: column; margin-bottom: 0; }
+  .profile-row > .card > .card-body { flex: 1; }
 
-  /* ── tables ── */
-  .section-wrap { margin-bottom: 6px; }
-  table { width: 100%; border-collapse: collapse; font-size: 6.8pt; }
+  /* FIELD ROWS inside profile cards — label + value stacked (matches app form layout) */
+  .field-row {
+    display: flex; align-items: baseline;
+    padding: 3px 0; border-bottom: 1px dashed #d4edda; font-size: 7.5pt;
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-label { color: #27ae60; font-weight: 700; min-width: 115px; flex-shrink: 0; }
+  .field-value { color: #111; font-weight: 600; flex: 1; }
+  .nd { color: #aaa; font-style: italic; font-weight: normal; }
+
+  /* ADDRESS sub-block */
+  .addr-block {
+    margin-top: 5px; padding: 4px 7px;
+    background: #f0faf4; border-left: 3px solid #27ae60;
+    border-radius: 3px; font-size: 7pt; color: #333; line-height: 1.5; font-weight: 600;
+  }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 7pt; }
+  thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   th {
-    background: linear-gradient(to right, #2ecc71, #27ae60);
-    color: white; padding: 3px 5px;
-    text-align: left; font-size: 6.5pt; font-weight: 700;
+    background-color: #1a7a3c !important; color: #fff !important;
+    padding: 4px 7px; text-align: left; font-size: 7pt; font-weight: 800;
+    border-right: 1px solid #27ae60;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  td { padding: 2px 5px; border-bottom: 1px solid #e0f2e9; vertical-align: top; }
-  tr:nth-child(even) td { background: #f7fdf9; }
-  .no-data-row { text-align: center; color: #888; font-style: italic; padding: 6px; }
-  .count-row td { font-weight: 600; color: #1a5c34; background: #f1f8f4 !important; font-size: 6.5pt; }
+  th:last-child { border-right: none; }
+  td { padding: 3px 7px; border-bottom: 1px solid #d4edda; vertical-align: top; }
+  tr:nth-child(even) td { background: #f3faf5; }
+  td.num { text-align: center; width: 22px; color: #27ae60; font-weight: 700; }
+  td.center { text-align: center; }
+  .no-data-row { text-align: center; color: #999; font-style: italic; padding: 8px; }
+  .count-row td {
+    font-weight: 700; color: #155724; background-color: #c3e6cb !important; font-size: 7pt;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
 
-  /* ── footer ── */
+  /* OTHER MEDICAL INFO — vertical card per entry (exact match to app) */
+  .other-card {
+    border: 1px solid #b2dfcc; border-radius: 5px;
+    padding: 5px 8px; margin-bottom: 6px; background: #f8fffe;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .other-card:last-child { margin-bottom: 0; }
+  .other-row {
+    display: flex; align-items: baseline;
+    padding: 2.5px 0; border-bottom: 1px dashed #d4edda; font-size: 7.5pt;
+  }
+  .other-row.last { border-bottom: none; }
+  .other-label { color: #27ae60; font-weight: 700; min-width: 80px; flex-shrink: 0; }
+  .other-value { color: #111; font-weight: 600; flex: 1; }
+  .no-data-p { color: #999; font-style: italic; padding: 6px 0; font-size: 7pt; }
+
+  /* PAGE FOOTER */
   .page-footer {
-    margin-top: 6px; padding: 4px 8px;
-    background: linear-gradient(to right, #2ecc71, #27ae60);
-    color: white; border-radius: 4px;
-    font-size: 6.5pt; text-align: center;
+    padding: 4px 9px; background-color: #1a7a3c; color: #fff;
+    border-radius: 4px; font-size: 6.5pt; text-align: center; font-weight: 600;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
-  /* ── print button (screen only) ── */
-  .no-print { margin: 12px 0; text-align: center; }
+  /* PRINT BUTTON (screen only) */
+  .no-print { margin: 14px 0; text-align: center; }
   @media print { .no-print { display: none !important; } }
 </style>
-</head><body>
+</head>
+<body>
 
+<!-- PAGE HEADER -->
 <div class="page-header">
-  <h1>🏥 Medical Information Summary</h1>
-  <div class="meta">Personal Health Tracker<br>Generated: ${new Date().toLocaleString()}</div>
+  <h1>🏥 Medical Information Dashboard</h1>
+  <div class="meta">Personal Health Tracker | Generated: ${new Date().toLocaleString()}</div>
 </div>
 
-<!-- ── ROW 1: Surgery | Patient side by side ── -->
+<!-- PROFILE ROW: Surgery/Clinic | Patient Details — side by side, equal height -->
 <div class="profile-row">
 
   <div class="card">
     <div class="card-title">🏥 Surgery / Clinic Details</div>
     <div class="card-body">
-      <div class="info-grid">
-        <div class="info-row"><span class="info-label">Doctor:</span><span class="info-value">${val(surgeryDetails.doctorName)}</span></div>
-        <div class="info-row"><span class="info-label">Surgery Name:</span><span class="info-value">${val(surgeryDetails.name)}</span></div>
-        <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${val(surgeryDetails.phone)}</span></div>
-      </div>
+      <div class="field-row"><span class="field-label">Doctor's Name</span><span class="field-value">${val(surgeryDetails.doctorName)}</span></div>
+      <div class="field-row"><span class="field-label">Surgery / Clinic Name</span><span class="field-value">${val(surgeryDetails.name)}</span></div>
+      <div class="field-row"><span class="field-label">Phone Number</span><span class="field-value">${val(surgeryDetails.phone)}</span></div>
       ${surgAddr}
     </div>
   </div>
@@ -2964,82 +2995,86 @@
   <div class="card">
     <div class="card-title">🧑‍⚕️ Patient Details</div>
     <div class="card-body">
-      <div class="info-grid">
-        <div class="info-row"><span class="info-label">Name:</span><span class="info-value">${val(patientDetails.name)}</span></div>
-        <div class="info-row"><span class="info-label">Date of Birth:</span><span class="info-value">${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString() : '<span class="nd">Not provided</span>'}</span></div>
-        <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${val(patientDetails.phone)}</span></div>
-        <div class="info-row"><span class="info-label">NHS Number:</span><span class="info-value">${val(patientDetails.nhsNumber)}</span></div>
-        <div class="info-row"><span class="info-label">Hospital No:</span><span class="info-value">${val(patientDetails.hospitalNumber)}</span></div>
-        <div class="info-row"><span class="info-label">Next of Kin:</span><span class="info-value">${val(patientDetails.nextKinName)}</span></div>
-        <div class="info-row"><span class="info-label">NOK Phone:</span><span class="info-value">${val(patientDetails.nextKinPhone)}</span></div>
-      </div>
+      <div class="field-row"><span class="field-label">Full Name</span><span class="field-value">${val(patientDetails.name)}</span></div>
+      <div class="field-row"><span class="field-label">Date of Birth</span><span class="field-value">${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString('en-GB') : '<span class="nd">Not provided</span>'}</span></div>
+      <div class="field-row"><span class="field-label">Phone Number</span><span class="field-value">${val(patientDetails.phone)}</span></div>
+      <div class="field-row"><span class="field-label">NHS Number</span><span class="field-value">${val(patientDetails.nhsNumber)}</span></div>
+      <div class="field-row"><span class="field-label">Hospital Number</span><span class="field-value">${val(patientDetails.hospitalNumber)}</span></div>
+      <div class="field-row"><span class="field-label">Next of Kin Name</span><span class="field-value">${val(patientDetails.nextKinName)}</span></div>
+      <div class="field-row"><span class="field-label">Next of Kin Phone</span><span class="field-value">${val(patientDetails.nextKinPhone)}</span></div>
       ${patAddr}
     </div>
   </div>
 
 </div>
 
-<!-- ── Medication List ── -->
-<div class="section-wrap">
-  <div class="card">
-    <div class="card-title">💊 Medication List</div>
-    <table>
-      <thead><tr><th>#</th><th>Medicine Name</th><th>Dosage (mg)</th><th>Due Time / Frequency</th></tr></thead>
-      <tbody>
-        ${medRows}
-        ${medicines.length ? `<tr class="count-row"><td colspan="4">Total Medicines: ${medicines.length}</td></tr>` : ''}
-      </tbody>
-    </table>
+<!-- MEDICATION LIST -->
+<div class="card">
+  <div class="card-title">💊 Medication List</div>
+  <table>
+    <thead><tr>
+      <th style="width:26px">#</th>
+      <th style="width:38%">Medicine Name</th>
+      <th style="width:18%">Dosage (mg)</th>
+      <th>Due Time / Frequency</th>
+    </tr></thead>
+    <tbody>
+      ${medRows}
+      ${medicines.length ? `<tr class="count-row"><td colspan="4">Total Medicines: ${medicines.length}</td></tr>` : ''}
+    </tbody>
+  </table>
+</div>
+
+<!-- OTHER MEDICAL INFORMATION — vertical card layout, same as app -->
+<div class="card">
+  <div class="card-title">📋 Other Medical Information</div>
+  <div class="card-body">
+    ${otherCards}
   </div>
 </div>
 
-<!-- ── Other Medical Information ── -->
-<div class="section-wrap">
-  <div class="card">
-    <div class="card-title">📋 Other Medical Information</div>
-    <table>
-      <thead><tr><th>Date</th><th>Allergies</th><th>Height</th><th>Weight</th><th>Other</th></tr></thead>
-      <tbody>${otherRows}</tbody>
-    </table>
-  </div>
+<!-- BLOOD PRESSURE & ECG READINGS -->
+<div class="card">
+  <div class="card-title">❤️ Blood Pressure &amp; ECG Readings</div>
+  <table>
+    <thead><tr>
+      <th>Date</th><th>Time</th>
+      <th>Systolic</th><th>Diastolic</th><th>Pulse</th>
+      <th>Sitting Down</th><th>Standing Up</th>
+      <th>ECG Monitor</th><th>Type Diagnosis</th>
+    </tr></thead>
+    <tbody>
+      ${bpRows}
+      ${bpReadings.length ? `<tr class="count-row"><td colspan="9">Total BP Readings: ${bpReadings.length}</td></tr>` : ''}
+    </tbody>
+  </table>
 </div>
 
-<!-- ── Blood Pressure & ECG ── -->
-<div class="section-wrap">
-  <div class="card">
-    <div class="card-title">❤️ Blood Pressure &amp; ECG Readings</div>
-    <table>
-      <thead><tr><th>Date</th><th>Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th><th>Sitting Down</th><th>Standing Up</th><th>ECG Monitor</th><th>Type Diagnosis</th></tr></thead>
-      <tbody>
-        ${bpRows}
-        ${bpReadings.length ? `<tr class="count-row"><td colspan="9">Total BP Readings: ${bpReadings.length}</td></tr>` : ''}
-      </tbody>
-    </table>
-  </div>
+<!-- GENERAL NOTES -->
+<div class="card">
+  <div class="card-title">📝 General Notes</div>
+  <table>
+    <thead><tr>
+      <th style="width:90px">Date</th>
+      <th style="width:30%">Operation / Episode</th>
+      <th>Notes</th>
+    </tr></thead>
+    <tbody>${noteRows}</tbody>
+  </table>
 </div>
 
-<!-- ── General Notes ── -->
-<div class="section-wrap">
-  <div class="card">
-    <div class="card-title">📝 General Notes</div>
-    <table>
-      <thead><tr><th>Date</th><th>Operation / Episode</th><th>Notes</th></tr></thead>
-      <tbody>${noteRows}</tbody>
-    </table>
-  </div>
-</div>
-
+<!-- PAGE FOOTER -->
 <div class="page-footer">
-  Medical Information Dashboard &nbsp;|&nbsp; All data stored locally in your browser
+  Medical Information App &nbsp;|&nbsp; All data stored locally in your browser
   &nbsp;|&nbsp; Patient: ${esc(patientDetails.name)||'—'}
   &nbsp;|&nbsp; Doctor: ${esc(surgeryDetails.doctorName)||'—'}
 </div>
 
 <div class="no-print">
-  <button onclick="window.print()" style="padding:8px 20px;background:#2ecc71;color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;margin-right:8px;">
+  <button onclick="window.print()" style="padding:9px 22px;background:#1a7a3c;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;margin-right:8px;">
     🖨️ Print / Save as PDF
   </button>
-  <button onclick="window.close()" style="padding:8px 20px;background:#e74c3c;color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;">
+  <button onclick="window.close()" style="padding:9px 22px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;">
     ✕ Close
   </button>
 </div>
