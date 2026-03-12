@@ -2912,7 +2912,7 @@
   .card {
     border: 1px solid #cccccc;
     border-top: 3px solid #003087;
-    border-radius: 2px; margin-bottom: 5px; overflow: hidden;
+    border-radius: 2px; margin-bottom: 5px; overflow: visible;
     background: #fff;
   }
   .card-title {
@@ -2931,7 +2931,7 @@
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 5px; margin-bottom: 5px; align-items: stretch;
   }
-  .profile-row > .card { display: flex; flex-direction: column; margin-bottom: 0; }
+  .profile-row > .card { display: flex; flex-direction: column; margin-bottom: 0; overflow: visible; }
   .profile-row > .card > .card-body { flex: 1; }
 
   /* Field rows inside profile cards */
@@ -2956,7 +2956,7 @@
     display: grid; grid-template-columns: 1fr 1fr;
     gap: 5px; margin-bottom: 5px; align-items: start;
   }
-  .col-left, .col-right { display: flex; flex-direction: column; gap: 5px; }
+  .col-left, .col-right { display: flex; flex-direction: column; gap: 5px; overflow: visible; }
 
   /* ── TABLES — bold black headers, no colour ── */
   table { width: 100%; border-collapse: collapse; font-size: 6pt; }
