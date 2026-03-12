@@ -2870,104 +2870,118 @@
 <html lang="en"><head><meta charset="UTF-8">
 <title>Medical Information Summary</title>
 <style>
-  @page { size: A4 landscape; margin: 8mm; }
+  @page { size: A4 landscape; margin: 6mm; }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; font-size: 7.5pt; color: #1a1a1a; background: #fff; }
+
+  /* Scale entire page to guarantee single-page fit */
+  html { height: 100%; }
+  body {
+    font-family: Arial, sans-serif; font-size: 6.5pt; color: #1a1a1a; background: #fff;
+    width: 277mm; /* A4 landscape printable width at 6mm margins */
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
 
   /* PAGE HEADER */
   .page-header {
     background-color: #1a7a3c; color: #fff;
-    padding: 6px 10px; border-radius: 5px;
+    padding: 4px 8px; border-radius: 4px;
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  .page-header h1 { font-size: 10.5pt; font-weight: 800; }
-  .page-header .meta { font-size: 6.5pt; text-align: right; line-height: 1.5; }
+  .page-header h1 { font-size: 9pt; font-weight: 800; }
+  .page-header .meta { font-size: 6pt; text-align: right; }
 
   /* SECTION CARD */
   .card {
-    border: 1px solid #b2dfcc; border-top: 3px solid #27ae60;
-    border-radius: 5px; margin-bottom: 6px; overflow: hidden;
+    border: 1px solid #b2dfcc; border-top: 2px solid #27ae60;
+    border-radius: 4px; margin-bottom: 4px; overflow: hidden;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .card-title {
     background-color: #1a7a3c; color: #fff;
-    padding: 4px 9px; font-size: 8pt; font-weight: 800; letter-spacing: 0.2px;
+    padding: 3px 7px; font-size: 7pt; font-weight: 800;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  .card-body { padding: 6px 9px; }
+  .card-body { padding: 3px 7px; }
 
-  /* PROFILE ROW — side by side, equal height */
+  /* ROW 1: Surgery | Patient — side by side, equal height */
   .profile-row {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 6px; margin-bottom: 6px; align-items: stretch;
+    gap: 4px; margin-bottom: 4px; align-items: stretch;
   }
   .profile-row > .card { display: flex; flex-direction: column; margin-bottom: 0; }
   .profile-row > .card > .card-body { flex: 1; }
 
-  /* FIELD ROWS inside profile cards — label + value stacked (matches app form layout) */
+  /* Field rows inside profile cards */
   .field-row {
     display: flex; align-items: baseline;
-    padding: 3px 0; border-bottom: 1px dashed #d4edda; font-size: 7.5pt;
+    padding: 1.5px 0; border-bottom: 1px dashed #d4edda; font-size: 6.5pt;
   }
   .field-row:last-child { border-bottom: none; }
-  .field-label { color: #27ae60; font-weight: 700; min-width: 115px; flex-shrink: 0; }
+  .field-label { color: #27ae60; font-weight: 700; min-width: 100px; flex-shrink: 0; }
   .field-value { color: #111; font-weight: 600; flex: 1; }
   .nd { color: #aaa; font-style: italic; font-weight: normal; }
 
-  /* ADDRESS sub-block */
+  /* Address sub-block */
   .addr-block {
-    margin-top: 5px; padding: 4px 7px;
-    background: #f0faf4; border-left: 3px solid #27ae60;
-    border-radius: 3px; font-size: 7pt; color: #333; line-height: 1.5; font-weight: 600;
+    margin-top: 3px; padding: 2px 5px;
+    background: #f0faf4; border-left: 2px solid #27ae60;
+    border-radius: 2px; font-size: 6pt; color: #333; line-height: 1.4; font-weight: 600;
   }
 
+  /* ROW 2: two-column layout for lower sections */
+  .main-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4px; margin-bottom: 4px; align-items: start;
+  }
+  .col-left, .col-right { display: flex; flex-direction: column; gap: 4px; }
+
   /* TABLES */
-  table { width: 100%; border-collapse: collapse; font-size: 7pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 6pt; }
   thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   th {
     background-color: #1a7a3c !important; color: #fff !important;
-    padding: 4px 7px; text-align: left; font-size: 7pt; font-weight: 800;
+    padding: 2.5px 5px; text-align: left; font-size: 6pt; font-weight: 800;
     border-right: 1px solid #27ae60;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   th:last-child { border-right: none; }
-  td { padding: 3px 7px; border-bottom: 1px solid #d4edda; vertical-align: top; }
+  td { padding: 2px 5px; border-bottom: 1px solid #d4edda; vertical-align: top; }
   tr:nth-child(even) td { background: #f3faf5; }
-  td.num { text-align: center; width: 22px; color: #27ae60; font-weight: 700; }
+  td.num { text-align: center; width: 18px; color: #27ae60; font-weight: 700; }
   td.center { text-align: center; }
-  .no-data-row { text-align: center; color: #999; font-style: italic; padding: 8px; }
+  .no-data-row { text-align: center; color: #999; font-style: italic; padding: 5px; }
   .count-row td {
-    font-weight: 700; color: #155724; background-color: #c3e6cb !important; font-size: 7pt;
+    font-weight: 700; color: #155724; background-color: #c3e6cb !important;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
-  /* OTHER MEDICAL INFO — vertical card per entry (exact match to app) */
+  /* OTHER MEDICAL INFO — vertical card per entry */
   .other-card {
-    border: 1px solid #b2dfcc; border-radius: 5px;
-    padding: 5px 8px; margin-bottom: 6px; background: #f8fffe;
+    border: 1px solid #b2dfcc; border-radius: 3px;
+    padding: 3px 6px; margin-bottom: 3px; background: #f8fffe;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .other-card:last-child { margin-bottom: 0; }
   .other-row {
     display: flex; align-items: baseline;
-    padding: 2.5px 0; border-bottom: 1px dashed #d4edda; font-size: 7.5pt;
+    padding: 1.5px 0; border-bottom: 1px dashed #d4edda; font-size: 6.5pt;
   }
   .other-row.last { border-bottom: none; }
-  .other-label { color: #27ae60; font-weight: 700; min-width: 80px; flex-shrink: 0; }
+  .other-label { color: #27ae60; font-weight: 700; min-width: 65px; flex-shrink: 0; }
   .other-value { color: #111; font-weight: 600; flex: 1; }
-  .no-data-p { color: #999; font-style: italic; padding: 6px 0; font-size: 7pt; }
+  .no-data-p { color: #999; font-style: italic; padding: 4px 0; font-size: 6pt; }
 
   /* PAGE FOOTER */
   .page-footer {
-    padding: 4px 9px; background-color: #1a7a3c; color: #fff;
-    border-radius: 4px; font-size: 6.5pt; text-align: center; font-weight: 600;
+    padding: 3px 7px; background-color: #1a7a3c; color: #fff;
+    border-radius: 3px; font-size: 6pt; text-align: center; font-weight: 600;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
   /* PRINT BUTTON (screen only) */
-  .no-print { margin: 14px 0; text-align: center; }
+  .no-print { margin: 12px 0; text-align: center; }
   @media print { .no-print { display: none !important; } }
 </style>
 </head>
@@ -2976,12 +2990,11 @@
 <!-- PAGE HEADER -->
 <div class="page-header">
   <h1>🏥 Medical Information Dashboard</h1>
-  <div class="meta">Personal Health Tracker | Generated: ${new Date().toLocaleString()}</div>
+  <div class="meta">Personal Health Tracker &nbsp;|&nbsp; Generated: ${new Date().toLocaleString()}</div>
 </div>
 
-<!-- PROFILE ROW: Surgery/Clinic | Patient Details — side by side, equal height -->
+<!-- ROW 1: Surgery/Clinic | Patient Details — side by side, equal height -->
 <div class="profile-row">
-
   <div class="card">
     <div class="card-title">🏥 Surgery / Clinic Details</div>
     <div class="card-body">
@@ -2991,7 +3004,6 @@
       ${surgAddr}
     </div>
   </div>
-
   <div class="card">
     <div class="card-title">🧑‍⚕️ Patient Details</div>
     <div class="card-body">
@@ -3005,62 +3017,71 @@
       ${patAddr}
     </div>
   </div>
-
 </div>
 
-<!-- MEDICATION LIST -->
-<div class="card">
-  <div class="card-title">💊 Medication List</div>
-  <table>
-    <thead><tr>
-      <th style="width:26px">#</th>
-      <th style="width:38%">Medicine Name</th>
-      <th style="width:18%">Dosage (mg)</th>
-      <th>Due Time / Frequency</th>
-    </tr></thead>
-    <tbody>
-      ${medRows}
-      ${medicines.length ? `<tr class="count-row"><td colspan="4">Total Medicines: ${medicines.length}</td></tr>` : ''}
-    </tbody>
-  </table>
-</div>
+<!-- ROW 2: Left col = Medication + Other Medical | Right col = BP + General Notes -->
+<div class="main-row">
+  <div class="col-left">
 
-<!-- OTHER MEDICAL INFORMATION — vertical card layout, same as app -->
-<div class="card">
-  <div class="card-title">📋 Other Medical Information</div>
-  <div class="card-body">
-    ${otherCards}
+    <!-- MEDICATION LIST -->
+    <div class="card">
+      <div class="card-title">💊 Medication List</div>
+      <table>
+        <thead><tr>
+          <th style="width:18px">#</th>
+          <th style="width:40%">Medicine Name</th>
+          <th style="width:20%">Dosage</th>
+          <th>Frequency</th>
+        </tr></thead>
+        <tbody>
+          ${medRows}
+          ${medicines.length ? `<tr class="count-row"><td colspan="4">Total: ${medicines.length}</td></tr>` : ''}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- OTHER MEDICAL INFORMATION -->
+    <div class="card">
+      <div class="card-title">📋 Other Medical Information</div>
+      <div class="card-body">
+        ${otherCards}
+      </div>
+    </div>
+
   </div>
-</div>
+  <div class="col-right">
 
-<!-- BLOOD PRESSURE & ECG READINGS -->
-<div class="card">
-  <div class="card-title">❤️ Blood Pressure &amp; ECG Readings</div>
-  <table>
-    <thead><tr>
-      <th>Date</th><th>Time</th>
-      <th>Systolic</th><th>Diastolic</th><th>Pulse</th>
-      <th>Sitting Down</th><th>Standing Up</th>
-      <th>ECG Monitor</th><th>Type Diagnosis</th>
-    </tr></thead>
-    <tbody>
-      ${bpRows}
-      ${bpReadings.length ? `<tr class="count-row"><td colspan="9">Total BP Readings: ${bpReadings.length}</td></tr>` : ''}
-    </tbody>
-  </table>
-</div>
+    <!-- BLOOD PRESSURE & ECG READINGS -->
+    <div class="card">
+      <div class="card-title">❤️ Blood Pressure &amp; ECG Readings</div>
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Time</th>
+          <th>Sys</th><th>Dia</th><th>Pulse</th>
+          <th>Sitting</th><th>Standing</th>
+          <th>ECG</th><th>Diagnosis</th>
+        </tr></thead>
+        <tbody>
+          ${bpRows}
+          ${bpReadings.length ? `<tr class="count-row"><td colspan="9">Total: ${bpReadings.length}</td></tr>` : ''}
+        </tbody>
+      </table>
+    </div>
 
-<!-- GENERAL NOTES -->
-<div class="card">
-  <div class="card-title">📝 General Notes</div>
-  <table>
-    <thead><tr>
-      <th style="width:90px">Date</th>
-      <th style="width:30%">Operation / Episode</th>
-      <th>Notes</th>
-    </tr></thead>
-    <tbody>${noteRows}</tbody>
-  </table>
+    <!-- GENERAL NOTES -->
+    <div class="card">
+      <div class="card-title">📝 General Notes</div>
+      <table>
+        <thead><tr>
+          <th style="width:75px">Date</th>
+          <th style="width:32%">Operation / Episode</th>
+          <th>Notes</th>
+        </tr></thead>
+        <tbody>${noteRows}</tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
 
 <!-- PAGE FOOTER -->
