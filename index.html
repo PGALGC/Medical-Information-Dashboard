@@ -1547,7 +1547,7 @@
                     <i class="fas fa-print"></i> Print Summary
                 </button>
                 <button class="btn btn-info" id="save-capture-btn">
-                    <i class="fas fa-save"></i> Save as Text File
+                    <i class="fas fa-save"></i> Save as HTML File
                 </button>
             </div>
         </div>
@@ -2785,142 +2785,299 @@
                 } : {r: 0, g: 0, b: 0};
             }
             
-            function captureAllDetails() {
-                let captureText = "=".repeat(80) + "\n";
-                captureText += "COMPLETE MEDICAL INFORMATION SUMMARY - KAMAL DHUNNA\n";
-                captureText += "=".repeat(80) + "\n\n";
-                captureText += `Generated: ${new Date().toLocaleString()}\n\n`;
-                
-                captureText += "PATIENT DETAILS\n";
-                captureText += "-".repeat(40) + "\n";
-                captureText += `Name: ${patientDetails.name || "Not provided"}\n`;
-                captureText += `Date of Birth: ${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString() : "Not provided"}\n`;
-                captureText += `Phone: ${patientDetails.phone || "Not provided"}\n`;
-                captureText += `NHS Number: ${patientDetails.nhsNumber || "Not provided"}\n`;
-                captureText += `Hospital Number: ${patientDetails.hospitalNumber || "Not provided"}\n`;
-                captureText += `Next of Kin Name: ${patientDetails.nextKinName || "Not provided"}\n`;
-                captureText += `Next of Kin Phone: ${patientDetails.nextKinPhone || "Not provided"}\n`;
-                
-                if (patientDetails.address) {
-                    const addr = patientDetails.address;
-                    captureText += "\nPATIENT ADDRESS:\n";
-                    if (addr.house) captureText += `House No/Name: ${addr.house}\n`;
-                    if (addr.line1) captureText += `Address Line 1: ${addr.line1}\n`;
-                    if (addr.line2) captureText += `Address Line 2: ${addr.line2}\n`;
-                    if (addr.town) captureText += `Town/City: ${addr.town}\n`;
-                    if (addr.county) captureText += `County: ${addr.county}\n`;
-                    if (addr.postcode) captureText += `Post Code: ${addr.postcode}\n`;
-                }
-                
-                captureText += "\n" + "-".repeat(40) + "\n";
-                captureText += "SURGERY/CLINIC DETAILS\n";
-                captureText += "-".repeat(40) + "\n";
-                captureText += `Doctor's Name: ${surgeryDetails.doctorName || "Not provided"}\n`;
-                captureText += `Surgery Name: ${surgeryDetails.name || "Not provided"}\n`;
-                captureText += `Phone: ${surgeryDetails.phone || "Not provided"}\n`;
-                
+            function buildCaptureHTML() {
+                // ── helpers ──────────────────────────────────────────────
+                const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                const val = v => esc(v) || '<span class="nd">Not provided</span>';
+                const noData = msg => `<tr><td colspan="99" class="no-data-row">${msg}</td></tr>`;
+
+                // ── surgery address ───────────────────────────────────────
+                let surgAddr = '';
                 if (surgeryDetails.address) {
-                    const addr = surgeryDetails.address;
-                    captureText += "\nSURGERY ADDRESS:\n";
-                    if (addr.house) captureText += `House No/Name: ${addr.house}\n`;
-                    if (addr.line1) captureText += `Address Line 1: ${addr.line1}\n`;
-                    if (addr.line2) captureText += `Address Line 2: ${addr.line2}\n`;
-                    if (addr.town) captureText += `Town/City: ${addr.town}\n`;
-                    if (addr.county) captureText += `County: ${addr.county}\n`;
-                    if (addr.postcode) captureText += `Post Code: ${addr.postcode}\n`;
-                }
-                
-                captureText += "\n" + "-".repeat(40) + "\n";
-                captureText += "MEDICATION LIST\n";
-                captureText += "-".repeat(40) + "\n";
-                if (medicines.length > 0) {
-                    medicines.forEach((med, index) => {
-                        captureText += `${index + 1}. ${med.name || "Unnamed Medicine"} - ${med.mg || "No dosage"} - ${med.due || "No due time"}\n`;
-                    });
-                    captureText += `\nTotal Medicines: ${medicines.length}\n`;
-                } else {
-                    captureText += "No medicines recorded.\n";
-                }
-                
-                captureText += "\n" + "-".repeat(40) + "\n";
-                captureText += "BLOOD PRESSURE & ECG READINGS\n";
-                captureText += "-".repeat(40) + "\n";
-                if (bpReadings.length > 0) {
-                    const sortedReadings = [...bpReadings].sort((a, b) => {
-                        const dateCompare = new Date(b.date) - new Date(a.date);
-                        if (dateCompare !== 0) return dateCompare;
-                        return b.id - a.id;
-                    });
-                    
-                    captureText += "DATE       TIME     SYSTOLIC DIASTOLIC PULSE SITTING DOWN STANDING UP ECG MONITOR       TYPE DIAGNOSIS\n";
-                    captureText += "---------- -------- -------- --------- ----- ----------- ----------- ----------------  --------------\n";
-                    
-                    sortedReadings.forEach((reading) => {
-                        const date = reading.date || "";
-                        const time = reading.time || "";
-                        const systolic = reading.systolic || "N/A";
-                        const diastolic = reading.diastolic || "N/A";
-                        const pulse = reading.pulse || "N/A";
-                        const sittingDown = reading.sittingDown || "N/A";
-                        const standingUp = reading.standingUp || "N/A";
-                        const ecgMonitor = reading.ecgMonitor || "N/A";
-                        const typeDiagnosis = reading.typeDiagnosis || "N/A";
-                        
-                        captureText += `${date.padEnd(10)} ${time.padEnd(8)} ${systolic.toString().padEnd(8)} ${diastolic.toString().padEnd(9)} ${pulse.toString().padEnd(5)} ${sittingDown.padEnd(11)} ${standingUp.padEnd(11)} ${ecgMonitor.padEnd(16)} ${typeDiagnosis}\n`;
-                    });
-                    captureText += `\nTotal BP Readings: ${bpReadings.length}\n`;
-                } else {
-                    captureText += "No blood pressure readings recorded.\n";
-                }
-                
-                captureText += "\n" + "-".repeat(40) + "\n";
-                captureText += "OTHER MEDICAL INFORMATION\n";
-                captureText += "-".repeat(40) + "\n";
-                if (otherMedicalInfo.length > 0) {
-                    otherMedicalInfo.forEach((row, index) => {
-                        if (index > 0) captureText += "\n";
-                        captureText += `Date:      ${row.date || 'Not provided'}\n`;
-                        captureText += `Allergies: ${row.allergies || 'Not provided'}\n`;
-                        captureText += `Height:    ${row.height || 'Not provided'}\n`;
-                        captureText += `Weight:    ${row.weight || 'Not provided'}\n`;
-                        captureText += `Other:     ${row.other || 'Not provided'}\n`;
-                        captureText += "-".repeat(40) + "\n";
-                    });
-                } else {
-                    captureText += "No other medical information recorded.\n";
+                    const a = surgeryDetails.address;
+                    const parts = [a.house, a.line1, a.line2, a.town, a.county, a.postcode].filter(Boolean);
+                    if (parts.length) surgAddr = `<div class="addr-block"><i>📍</i> ${parts.map(esc).join(', ')}</div>`;
                 }
 
-                captureText += "\n" + "-".repeat(40) + "\n";
-                captureText += "GENERAL NOTES\n";
-                captureText += "-".repeat(40) + "\n";
+                // ── patient address ───────────────────────────────────────
+                let patAddr = '';
+                if (patientDetails.address) {
+                    const a = patientDetails.address;
+                    const parts = [a.house, a.line1, a.line2, a.town, a.county, a.postcode].filter(Boolean);
+                    if (parts.length) patAddr = `<div class="addr-block"><i>🏠</i> ${parts.map(esc).join(', ')}</div>`;
+                }
+
+                // ── medicines rows ────────────────────────────────────────
+                let medRows = medicines.length
+                    ? medicines.map((m,i) => `<tr>
+                        <td>${i+1}</td>
+                        <td>${val(m.name)}</td>
+                        <td>${val(m.mg)}</td>
+                        <td>${val(m.due)}</td>
+                      </tr>`).join('')
+                    : noData('No medicines recorded.');
+
+                // ── BP rows ───────────────────────────────────────────────
+                let bpRows = '';
+                if (bpReadings.length > 0) {
+                    const sorted = [...bpReadings].sort((a,b) => {
+                        const dc = new Date(b.date) - new Date(a.date);
+                        return dc !== 0 ? dc : b.id - a.id;
+                    });
+                    bpRows = sorted.map(r => `<tr>
+                        <td>${esc(r.date)}</td>
+                        <td>${esc(r.time)}</td>
+                        <td>${esc(r.systolic)||'N/A'}</td>
+                        <td>${esc(r.diastolic)||'N/A'}</td>
+                        <td>${esc(r.pulse)||'N/A'}</td>
+                        <td>${esc(r.sittingDown)||'N/A'}</td>
+                        <td>${esc(r.standingUp)||'N/A'}</td>
+                        <td>${esc(r.ecgMonitor)||'N/A'}</td>
+                        <td>${esc(r.typeDiagnosis)||'N/A'}</td>
+                      </tr>`).join('');
+                } else {
+                    bpRows = noData('No blood pressure readings recorded.');
+                }
+
+                // ── other medical info rows ───────────────────────────────
+                let otherRows = otherMedicalInfo.length
+                    ? otherMedicalInfo.map(r => `<tr>
+                        <td>${esc(r.date)||'—'}</td>
+                        <td>${esc(r.allergies)||'—'}</td>
+                        <td>${esc(r.height)||'—'}</td>
+                        <td>${esc(r.weight)||'—'}</td>
+                        <td>${esc(r.other)||'—'}</td>
+                      </tr>`).join('')
+                    : noData('No other medical information recorded.');
+
+                // ── general notes rows ────────────────────────────────────
+                let noteRows = '';
                 if (generalNotes.length) {
-                    captureText += `${"Date".padEnd(12)} ${"Type of Operation".padEnd(25)} Notes\n`;
-                    captureText += "-".repeat(70) + "\n";
-                    const sortedNotes = [...generalNotes].sort((a, b) => {
+                    const sorted = [...generalNotes].sort((a,b) => {
                         const da = a.date ? new Date(a.date) : new Date(0);
                         const db = b.date ? new Date(b.date) : new Date(0);
                         return da - db;
                     });
-                    sortedNotes.forEach(n => {
-                        captureText += `${(n.date || '').padEnd(12)} ${(n.type || '').padEnd(25)} ${n.notes || ''}\n`;
-                    });
+                    noteRows = sorted.map(n => `<tr>
+                        <td>${esc(n.date)||'—'}</td>
+                        <td>${esc(n.type)||'—'}</td>
+                        <td>${esc(n.notes)||'—'}</td>
+                      </tr>`).join('');
                 } else {
-                    captureText += "No general notes recorded.\n";
+                    noteRows = noData('No general notes recorded.');
                 }
-                
-                captureText += "\n" + "=".repeat(80) + "\n";
-                captureText += "SUMMARY\n";
-                captureText += "=".repeat(80) + "\n";
-                captureText += `Patient: ${patientDetails.name || "Not specified"}\n`;
-                captureText += `Doctor: ${surgeryDetails.doctorName || "Not specified"}\n`;
-                captureText += `Surgery/Clinic: ${surgeryDetails.name || "Not specified"}\n`;
-                captureText += `Medicines Count: ${medicines.length}\n`;
-                captureText += `BP Readings Count: ${bpReadings.length}\n`;
-                captureText += `Other Medical Info Rows: ${otherMedicalInfo.length}\n`;
-                captureText += `Has General Notes: ${generalNotes.length ? "Yes" : "No"}\n`;
-                captureText += `Last Updated: ${new Date().toLocaleString()}\n`;
-                
-                document.getElementById('capture-content').textContent = captureText;
+
+                // ── assemble HTML ─────────────────────────────────────────
+                return `
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Medical Information Summary</title>
+<style>
+  @page { size: A4 portrait; margin: 8mm; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 7.5pt; color: #1a1a1a; background: #fff; }
+
+  /* ── header ── */
+  .page-header {
+    background: linear-gradient(to right, #2ecc71, #27ae60);
+    color: white; padding: 7px 10px; border-radius: 5px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .page-header h1 { font-size: 11pt; }
+  .page-header .meta { font-size: 6.5pt; opacity: .9; text-align: right; }
+
+  /* ── two-column profile row ── */
+  .profile-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+
+  /* ── section card ── */
+  .card {
+    border: 1px solid #c8e6c9;
+    border-top: 3px solid #2ecc71;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .card-title {
+    background: #f1f8f4;
+    padding: 4px 8px;
+    font-size: 8pt;
+    font-weight: 700;
+    color: #1a5c34;
+    border-bottom: 1px solid #c8e6c9;
+  }
+  .card-body { padding: 5px 8px; }
+
+  /* ── info grid inside cards ── */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+  .info-row { display: flex; gap: 4px; align-items: baseline; font-size: 7pt; padding: 1px 0; }
+  .info-label { color: #555; white-space: nowrap; min-width: 80px; flex-shrink: 0; }
+  .info-value { color: #111; font-weight: 600; }
+  .nd { color: #999; font-weight: normal; font-style: italic; }
+  .addr-block { margin-top: 4px; padding: 3px 6px; background: #f7fdf9; border-left: 2px solid #2ecc71; font-size: 6.8pt; color: #333; border-radius: 2px; }
+
+  /* ── tables ── */
+  .section-wrap { margin-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 6.8pt; }
+  th {
+    background: linear-gradient(to right, #2ecc71, #27ae60);
+    color: white; padding: 3px 5px;
+    text-align: left; font-size: 6.5pt; font-weight: 700;
+  }
+  td { padding: 2px 5px; border-bottom: 1px solid #e0f2e9; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7fdf9; }
+  .no-data-row { text-align: center; color: #888; font-style: italic; padding: 6px; }
+  .count-row td { font-weight: 600; color: #1a5c34; background: #f1f8f4 !important; font-size: 6.5pt; }
+
+  /* ── footer ── */
+  .page-footer {
+    margin-top: 6px; padding: 4px 8px;
+    background: linear-gradient(to right, #2ecc71, #27ae60);
+    color: white; border-radius: 4px;
+    font-size: 6.5pt; text-align: center;
+  }
+
+  /* ── print button (screen only) ── */
+  .no-print { margin: 12px 0; text-align: center; }
+  @media print { .no-print { display: none !important; } }
+</style>
+</head><body>
+
+<div class="page-header">
+  <h1>🏥 Medical Information Summary</h1>
+  <div class="meta">Personal Health Tracker<br>Generated: ${new Date().toLocaleString()}</div>
+</div>
+
+<!-- ── ROW 1: Surgery | Patient side by side ── -->
+<div class="profile-row">
+
+  <div class="card">
+    <div class="card-title">🏥 Surgery / Clinic Details</div>
+    <div class="card-body">
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">Doctor:</span><span class="info-value">${val(surgeryDetails.doctorName)}</span></div>
+        <div class="info-row"><span class="info-label">Surgery Name:</span><span class="info-value">${val(surgeryDetails.name)}</span></div>
+        <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${val(surgeryDetails.phone)}</span></div>
+      </div>
+      ${surgAddr}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧑‍⚕️ Patient Details</div>
+    <div class="card-body">
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">Name:</span><span class="info-value">${val(patientDetails.name)}</span></div>
+        <div class="info-row"><span class="info-label">Date of Birth:</span><span class="info-value">${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString() : '<span class="nd">Not provided</span>'}</span></div>
+        <div class="info-row"><span class="info-label">Phone:</span><span class="info-value">${val(patientDetails.phone)}</span></div>
+        <div class="info-row"><span class="info-label">NHS Number:</span><span class="info-value">${val(patientDetails.nhsNumber)}</span></div>
+        <div class="info-row"><span class="info-label">Hospital No:</span><span class="info-value">${val(patientDetails.hospitalNumber)}</span></div>
+        <div class="info-row"><span class="info-label">Next of Kin:</span><span class="info-value">${val(patientDetails.nextKinName)}</span></div>
+        <div class="info-row"><span class="info-label">NOK Phone:</span><span class="info-value">${val(patientDetails.nextKinPhone)}</span></div>
+      </div>
+      ${patAddr}
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Medication List ── -->
+<div class="section-wrap">
+  <div class="card">
+    <div class="card-title">💊 Medication List</div>
+    <table>
+      <thead><tr><th>#</th><th>Medicine Name</th><th>Dosage (mg)</th><th>Due Time / Frequency</th></tr></thead>
+      <tbody>
+        ${medRows}
+        ${medicines.length ? `<tr class="count-row"><td colspan="4">Total Medicines: ${medicines.length}</td></tr>` : ''}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── Other Medical Information ── -->
+<div class="section-wrap">
+  <div class="card">
+    <div class="card-title">📋 Other Medical Information</div>
+    <table>
+      <thead><tr><th>Date</th><th>Allergies</th><th>Height</th><th>Weight</th><th>Other</th></tr></thead>
+      <tbody>${otherRows}</tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── Blood Pressure & ECG ── -->
+<div class="section-wrap">
+  <div class="card">
+    <div class="card-title">❤️ Blood Pressure &amp; ECG Readings</div>
+    <table>
+      <thead><tr><th>Date</th><th>Time</th><th>Systolic</th><th>Diastolic</th><th>Pulse</th><th>Sitting Down</th><th>Standing Up</th><th>ECG Monitor</th><th>Type Diagnosis</th></tr></thead>
+      <tbody>
+        ${bpRows}
+        ${bpReadings.length ? `<tr class="count-row"><td colspan="9">Total BP Readings: ${bpReadings.length}</td></tr>` : ''}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── General Notes ── -->
+<div class="section-wrap">
+  <div class="card">
+    <div class="card-title">📝 General Notes</div>
+    <table>
+      <thead><tr><th>Date</th><th>Operation / Episode</th><th>Notes</th></tr></thead>
+      <tbody>${noteRows}</tbody>
+    </table>
+  </div>
+</div>
+
+<div class="page-footer">
+  Medical Information Dashboard &nbsp;|&nbsp; All data stored locally in your browser
+  &nbsp;|&nbsp; Patient: ${esc(patientDetails.name)||'—'}
+  &nbsp;|&nbsp; Doctor: ${esc(surgeryDetails.doctorName)||'—'}
+</div>
+
+<div class="no-print">
+  <button onclick="window.print()" style="padding:8px 20px;background:#2ecc71;color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;margin-right:8px;">
+    🖨️ Print / Save as PDF
+  </button>
+  <button onclick="window.close()" style="padding:8px 20px;background:#e74c3c;color:white;border:none;border-radius:4px;cursor:pointer;font-size:13px;">
+    ✕ Close
+  </button>
+</div>
+
+</body></html>`;
+            }
+
+            function captureAllDetails() {
+                // Build plain-text version for the modal preview (legacy display)
+                const html = buildCaptureHTML();
+                // Store HTML on the element for print/save use
+                const el = document.getElementById('capture-content');
+                el.dataset.captureHtml = html;
+
+                // Also build a plain-text version for the modal display
+                let captureText = "COMPLETE MEDICAL INFORMATION SUMMARY\n";
+                captureText += `Generated: ${new Date().toLocaleString()}\n\n`;
+                captureText += `SURGERY/CLINIC\nDoctor: ${surgeryDetails.doctorName||'—'}  |  Surgery: ${surgeryDetails.name||'—'}  |  Phone: ${surgeryDetails.phone||'—'}\n\n`;
+                captureText += `PATIENT\nName: ${patientDetails.name||'—'}  |  DOB: ${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString() : '—'}  |  NHS: ${patientDetails.nhsNumber||'—'}  |  Hospital No: ${patientDetails.hospitalNumber||'—'}\nPhone: ${patientDetails.phone||'—'}  |  Next of Kin: ${patientDetails.nextKinName||'—'} (${patientDetails.nextKinPhone||'—'})\n\n`;
+                captureText += `MEDICATION LIST (${medicines.length})\n`;
+                if (medicines.length) medicines.forEach((m,i) => { captureText += `  ${i+1}. ${m.name||'Unnamed'} — ${m.mg||'—'} — ${m.due||'—'}\n`; });
+                else captureText += "  No medicines recorded.\n";
+                captureText += `\nOTHER MEDICAL INFORMATION (${otherMedicalInfo.length})\n`;
+                if (otherMedicalInfo.length) otherMedicalInfo.forEach(r => { captureText += `  Date: ${r.date||'—'} | Allergies: ${r.allergies||'—'} | Height: ${r.height||'—'} | Weight: ${r.weight||'—'} | Other: ${r.other||'—'}\n`; });
+                else captureText += "  No other medical information recorded.\n";
+                captureText += `\nBLOOD PRESSURE & ECG READINGS (${bpReadings.length})\n`;
+                if (bpReadings.length) {
+                    const sorted = [...bpReadings].sort((a,b) => { const dc=new Date(b.date)-new Date(a.date); return dc!==0?dc:b.id-a.id; });
+                    captureText += "  Date       Time     Sys  Dia  Pulse Sitting  Standing ECG              Diagnosis\n";
+                    sorted.forEach(r => { captureText += `  ${(r.date||'').padEnd(10)} ${(r.time||'').padEnd(8)} ${(r.systolic||'').toString().padEnd(4)} ${(r.diastolic||'').toString().padEnd(4)} ${(r.pulse||'').toString().padEnd(5)} ${(r.sittingDown||'').padEnd(8)} ${(r.standingUp||'').padEnd(8)} ${(r.ecgMonitor||'').padEnd(16)} ${r.typeDiagnosis||''}\n`; });
+                } else captureText += "  No BP readings recorded.\n";
+                captureText += `\nGENERAL NOTES (${generalNotes.length})\n`;
+                if (generalNotes.length) {
+                    const sorted = [...generalNotes].sort((a,b)=>(a.date?new Date(a.date):new Date(0))-(b.date?new Date(b.date):new Date(0)));
+                    sorted.forEach(n => { captureText += `  ${(n.date||'—').padEnd(12)} ${(n.type||'—').padEnd(25)} ${n.notes||''}\n`; });
+                } else captureText += "  No general notes recorded.\n";
+
+                el.textContent = captureText;
                 closeAllDropdowns();
                 document.getElementById('capture-modal').style.display = 'block';
             }
@@ -2954,94 +3111,27 @@
             }
             
             function printCapture() {
-                const captureText = document.getElementById('capture-content').textContent;
+                const html = buildCaptureHTML();
                 const printWindow = window.open('', '_blank');
-                printWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>Medical Information Summary - PATIENT</title>
-                        <style>
-                            @page {
-                                size: A4 portrait;
-                                margin: 8mm;
-                            }
-                            * { box-sizing: border-box; margin: 0; padding: 0; }
-                            body {
-                                font-family: Arial, sans-serif;
-                                font-size: 7pt;
-                                line-height: 1.3;
-                                padding: 0;
-                                width: 100%;
-                            }
-                            .summary-header {
-                                text-align: center;
-                                margin-bottom: 4px;
-                                border-bottom: 1.5px solid #2ecc71;
-                                padding-bottom: 3px;
-                            }
-                            .summary-header h1 {
-                                color: #2ecc71;
-                                font-size: 10pt;
-                                margin-bottom: 1px;
-                            }
-                            .summary-header p {
-                                font-size: 6.5pt;
-                                color: #555;
-                                margin: 1px 0;
-                            }
-                            pre {
-                                white-space: pre-wrap;
-                                word-break: break-word;
-                                font-family: 'Courier New', monospace;
-                                font-size: 6.5pt;
-                                line-height: 1.25;
-                                width: 100%;
-                            }
-                            .no-print { display: block; margin-top: 15px; text-align: center; }
-                            @media print {
-                                .no-print { display: none !important; }
-                                html, body { height: 100%; overflow: hidden; }
-                                pre {
-                                    font-size: 6.5pt;
-                                    line-height: 1.25;
-                                }
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="summary-header">
-                            <h1>Medical Information Summary</h1>
-                            <p>PATIENT - Personal Health Tracker &nbsp;|&nbsp; Generated: ${new Date().toLocaleString()}</p>
-                        </div>
-                        <pre>${captureText}</pre>
-                        <div class="no-print">
-                            <button onclick="window.print()" style="padding: 8px 18px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
-                                Print / Save as PDF
-                            </button>
-                            <button onclick="window.close()" style="padding: 8px 18px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; font-size: 13px;">
-                                Close Window
-                            </button>
-                        </div>
-                    </body>
-                    </html>
-                `);
+                printWindow.document.write(html);
                 printWindow.document.close();
                 printWindow.focus();
             }
             
             function saveCaptureAsText() {
-                const captureText = document.getElementById('capture-content').textContent;
-                const dataBlob = new Blob([captureText], {type: 'text/plain'});
+                const html = buildCaptureHTML();
+                const dataBlob = new Blob([html], {type: 'text/html'});
                 const url = URL.createObjectURL(dataBlob);
                 
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `patient-medical-summary-${new Date().toISOString().slice(0, 10)}.txt`;
+                link.download = `patient-medical-summary-${new Date().toISOString().slice(0, 10)}.html`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                URL.revokeObjectURL(url);
                 
-                showStatus('Summary saved as text file!', 'success');
+                showStatus('Summary saved as HTML file!', 'success');
             }
             
             function backupData() {
