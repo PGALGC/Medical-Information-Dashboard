@@ -2865,6 +2865,13 @@
                       </tr>`).join('');
                 })();
 
+                // ── detect if BP section will push General Notes off page 1 ──
+                // A4 landscape usable height ~190mm. Header ~15mm, profile row ~38mm,
+                // footer ~8mm, margins ~20mm = ~109mm consumed. Right col has ~81mm left.
+                // BP table header ~6mm + each row ~4.5mm + count row ~4mm = threshold ~14 rows
+                const BP_ROWS_THRESHOLD = 14;
+                const bpWillOverflow = bpReadings.length > BP_ROWS_THRESHOLD;
+
                 // ── HTML ─────────────────────────────────────────────────
                 return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8">
@@ -3009,6 +3016,8 @@
     color: #003087; font-weight: 800; text-transform: uppercase; font-size: 5.5pt;
   }
 
+
+
   /* ── PRINT BUTTON (screen only) ── */
   .no-print { margin: 14px 0; text-align: center; }
   @media print { .no-print { display: none !important; } }
@@ -3106,8 +3115,8 @@
       </table>
     </div>
 
-    <!-- GENERAL NOTES -->
-    <div class="card">
+    <!-- GENERAL NOTES — in right column when BP is small -->
+    ${!bpWillOverflow ? `<div class="card">
       <div class="card-title">General Notes &amp; Clinical Episodes</div>
       <table>
         <thead><tr>
@@ -3117,10 +3126,25 @@
         </tr></thead>
         <tbody>${noteRows}</tbody>
       </table>
-    </div>
+    </div>` : ''}
 
   </div>
 </div>
+
+<!-- GENERAL NOTES — full width on page 2 only when BP section is large -->
+${bpWillOverflow ? `<div style="width:100%;page-break-before:always;break-before:page;margin-bottom:5px;">
+  <div class="card">
+    <div class="card-title">General Notes &amp; Clinical Episodes</div>
+    <table>
+      <thead><tr>
+        <th style="width:75px">Date</th>
+        <th style="width:22%">Operation / Episode</th>
+        <th>Notes</th>
+      </tr></thead>
+      <tbody>${noteRows}</tbody>
+    </table>
+  </div>
+</div>` : ''}
 
 <!-- PAGE FOOTER -->
 <div class="page-footer">
@@ -3131,10 +3155,10 @@
 
 <div class="no-print">
   <button onclick="window.print()" style="padding:9px 22px;background:#003087;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;margin-right:8px;">
-    🖨️ Print / Save as PDF
+    \u{1F5A8}\uFE0F Print / Save as PDF
   </button>
   <button onclick="window.close()" style="padding:9px 22px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;">
-    ✕ Close
+    \u2715 Close
   </button>
 </div>
 
