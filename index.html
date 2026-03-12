@@ -2870,45 +2870,66 @@
 <html lang="en"><head><meta charset="UTF-8">
 <title>Medical Information Summary</title>
 <style>
-  @page { size: A4 landscape; margin: 6mm; }
+  @page { size: A4 landscape; margin: 10mm 8mm; }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Scale entire page to guarantee single-page fit */
   html { height: 100%; }
   body {
-    font-family: Arial, sans-serif; font-size: 6.5pt; color: #1a1a1a; background: #fff;
-    width: 277mm; /* A4 landscape printable width at 6mm margins */
+    font-family: 'Arial', 'Helvetica Neue', sans-serif;
+    font-size: 6.5pt; color: #1a1a1a; background: #fff;
+    width: 277mm;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
-  /* PAGE HEADER */
+  /* ── PAGE HEADER — clean white/grey NHS-style, no green ── */
   .page-header {
-    background-color: #1a7a3c; color: #fff;
-    padding: 4px 8px; border-radius: 4px;
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 4px;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    background: #fff;
+    border-bottom: 3px solid #003087; /* NHS Blue */
+    padding: 5px 8px 4px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 6px;
   }
-  .page-header h1 { font-size: 9pt; font-weight: 800; }
-  .page-header .meta { font-size: 6pt; text-align: right; }
+  .page-header-left { display: flex; flex-direction: column; gap: 1px; }
+  .page-header h1 {
+    font-size: 10pt; font-weight: 900; color: #003087; letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .page-header .subtitle {
+    font-size: 6.5pt; color: #444; font-weight: 600;
+  }
+  .page-header .meta {
+    font-size: 6pt; text-align: right; color: #555; line-height: 1.5;
+  }
+  .nhs-logo-text {
+    font-size: 8pt; font-weight: 900; color: #003087;
+    border: 2px solid #003087; padding: 1px 4px;
+    letter-spacing: 1px; margin-right: 8px;
+    display: inline-block;
+  }
+  .header-branding { display: flex; align-items: center; }
 
-  /* SECTION CARD */
+  /* ── SECTION CARD — white with dark border top, bold black title ── */
   .card {
-    border: 1px solid #b2dfcc; border-top: 2px solid #27ae60;
-    border-radius: 4px; margin-bottom: 4px; overflow: hidden;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    border: 1px solid #cccccc;
+    border-top: 3px solid #003087;
+    border-radius: 2px; margin-bottom: 5px; overflow: hidden;
+    background: #fff;
   }
   .card-title {
-    background-color: #1a7a3c; color: #fff;
-    padding: 3px 7px; font-size: 7pt; font-weight: 800;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    background: #f2f4f8;
+    color: #000;
+    padding: 3px 8px;
+    font-size: 7pt; font-weight: 900;
+    border-bottom: 1px solid #cccccc;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
   }
-  .card-body { padding: 3px 7px; }
+  .card-body { padding: 4px 8px; }
 
-  /* ROW 1: Surgery | Patient — side by side, equal height */
+  /* ── PROFILE GRID ── */
   .profile-row {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 4px; margin-bottom: 4px; align-items: stretch;
+    gap: 5px; margin-bottom: 5px; align-items: stretch;
   }
   .profile-row > .card { display: flex; flex-direction: column; margin-bottom: 0; }
   .profile-row > .card > .card-body { flex: 1; }
@@ -2916,72 +2937,80 @@
   /* Field rows inside profile cards */
   .field-row {
     display: flex; align-items: baseline;
-    padding: 1.5px 0; border-bottom: 1px dashed #d4edda; font-size: 6.5pt;
+    padding: 2px 0; border-bottom: 1px dotted #ddd; font-size: 6.5pt;
   }
   .field-row:last-child { border-bottom: none; }
-  .field-label { color: #27ae60; font-weight: 700; min-width: 100px; flex-shrink: 0; }
-  .field-value { color: #111; font-weight: 600; flex: 1; }
-  .nd { color: #aaa; font-style: italic; font-weight: normal; }
+  .field-label { color: #000; font-weight: 800; min-width: 110px; flex-shrink: 0; }
+  .field-value { color: #222; font-weight: 500; flex: 1; }
+  .nd { color: #888; font-style: italic; font-weight: normal; }
 
   /* Address sub-block */
   .addr-block {
-    margin-top: 3px; padding: 2px 5px;
-    background: #f0faf4; border-left: 2px solid #27ae60;
-    border-radius: 2px; font-size: 6pt; color: #333; line-height: 1.4; font-weight: 600;
+    margin-top: 3px; padding: 2px 6px;
+    background: #f7f8fa; border-left: 2px solid #003087;
+    border-radius: 2px; font-size: 6pt; color: #333; line-height: 1.5; font-weight: 500;
   }
 
-  /* ROW 2: two-column layout for lower sections */
+  /* ── TWO-COLUMN MAIN LAYOUT ── */
   .main-row {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 4px; margin-bottom: 4px; align-items: start;
+    gap: 5px; margin-bottom: 5px; align-items: start;
   }
-  .col-left, .col-right { display: flex; flex-direction: column; gap: 4px; }
+  .col-left, .col-right { display: flex; flex-direction: column; gap: 5px; }
 
-  /* TABLES */
+  /* ── TABLES — bold black headers, no colour ── */
   table { width: 100%; border-collapse: collapse; font-size: 6pt; }
-  thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  thead tr { background: #f2f4f8; }
   th {
-    background-color: #1a7a3c !important; color: #fff !important;
-    padding: 2.5px 5px; text-align: left; font-size: 6pt; font-weight: 800;
-    border-right: 1px solid #27ae60;
+    background: #f2f4f8 !important;
+    color: #000 !important;
+    padding: 3px 5px; text-align: left; font-size: 6pt; font-weight: 900;
+    border-bottom: 2px solid #003087;
+    border-right: 1px solid #ddd;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    text-transform: uppercase; letter-spacing: 0.2px;
   }
   th:last-child { border-right: none; }
-  td { padding: 2px 5px; border-bottom: 1px solid #d4edda; vertical-align: top; }
-  tr:nth-child(even) td { background: #f3faf5; }
-  td.num { text-align: center; width: 18px; color: #27ae60; font-weight: 700; }
+  td { padding: 2.5px 5px; border-bottom: 1px solid #e8e8e8; vertical-align: top; color: #1a1a1a; }
+  tr:nth-child(even) td { background: #fafafa; }
+  td.num { text-align: center; width: 18px; color: #003087; font-weight: 700; }
   td.center { text-align: center; }
   .no-data-row { text-align: center; color: #999; font-style: italic; padding: 5px; }
   .count-row td {
-    font-weight: 700; color: #155724; background-color: #c3e6cb !important;
+    font-weight: 800; color: #000; background: #e8ecf4 !important;
+    border-top: 1px solid #aab0c4;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
 
-  /* OTHER MEDICAL INFO — vertical card per entry */
+  /* ── OTHER MEDICAL INFO ── */
   .other-card {
-    border: 1px solid #b2dfcc; border-radius: 3px;
-    padding: 3px 6px; margin-bottom: 3px; background: #f8fffe;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    border: 1px solid #ddd; border-radius: 2px;
+    padding: 3px 6px; margin-bottom: 3px; background: #fafafa;
   }
   .other-card:last-child { margin-bottom: 0; }
   .other-row {
     display: flex; align-items: baseline;
-    padding: 1.5px 0; border-bottom: 1px dashed #d4edda; font-size: 6.5pt;
+    padding: 1.5px 0; border-bottom: 1px dotted #ddd; font-size: 6.5pt;
   }
   .other-row.last { border-bottom: none; }
-  .other-label { color: #27ae60; font-weight: 700; min-width: 65px; flex-shrink: 0; }
-  .other-value { color: #111; font-weight: 600; flex: 1; }
+  .other-label { color: #000; font-weight: 800; min-width: 65px; flex-shrink: 0; }
+  .other-value { color: #222; font-weight: 500; flex: 1; }
   .no-data-p { color: #999; font-style: italic; padding: 4px 0; font-size: 6pt; }
 
-  /* PAGE FOOTER */
+  /* ── PAGE FOOTER — clean grey bar ── */
   .page-footer {
-    padding: 3px 7px; background-color: #1a7a3c; color: #fff;
-    border-radius: 3px; font-size: 6pt; text-align: center; font-weight: 600;
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    padding: 3px 8px;
+    background: #f2f4f8;
+    border-top: 2px solid #003087;
+    font-size: 6pt; color: #333; font-weight: 600;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .page-footer .conf-notice {
+    color: #003087; font-weight: 800; text-transform: uppercase; font-size: 5.5pt;
   }
 
-  /* PRINT BUTTON (screen only) */
-  .no-print { margin: 12px 0; text-align: center; }
+  /* ── PRINT BUTTON (screen only) ── */
+  .no-print { margin: 14px 0; text-align: center; }
   @media print { .no-print { display: none !important; } }
 </style>
 </head>
@@ -2989,14 +3018,23 @@
 
 <!-- PAGE HEADER -->
 <div class="page-header">
-  <h1>🏥 Medical Information Dashboard</h1>
-  <div class="meta">Personal Health Tracker &nbsp;|&nbsp; Generated: ${new Date().toLocaleString()}</div>
+  <div class="page-header-left">
+    <div class="header-branding">
+      <span class="nhs-logo-text">NHS</span>
+      <h1>Patient Medical Information Report</h1>
+    </div>
+    <div class="subtitle">Confidential — For Clinical Use Only</div>
+  </div>
+  <div class="meta">
+    <strong>Generated:</strong> ${new Date().toLocaleString('en-GB')}<br>
+    Personal Health Tracker &nbsp;|&nbsp; v2.7
+  </div>
 </div>
 
 <!-- ROW 1: Surgery/Clinic | Patient Details — side by side, equal height -->
 <div class="profile-row">
   <div class="card">
-    <div class="card-title">🏥 Surgery / Clinic Details</div>
+    <div class="card-title">Surgery / Clinic Details</div>
     <div class="card-body">
       <div class="field-row"><span class="field-label">Doctor's Name</span><span class="field-value">${val(surgeryDetails.doctorName)}</span></div>
       <div class="field-row"><span class="field-label">Surgery / Clinic Name</span><span class="field-value">${val(surgeryDetails.name)}</span></div>
@@ -3005,7 +3043,7 @@
     </div>
   </div>
   <div class="card">
-    <div class="card-title">🧑‍⚕️ Patient Details</div>
+    <div class="card-title">Patient Details</div>
     <div class="card-body">
       <div class="field-row"><span class="field-label">Full Name</span><span class="field-value">${val(patientDetails.name)}</span></div>
       <div class="field-row"><span class="field-label">Date of Birth</span><span class="field-value">${patientDetails.dob ? new Date(patientDetails.dob).toLocaleDateString('en-GB') : '<span class="nd">Not provided</span>'}</span></div>
@@ -3025,7 +3063,7 @@
 
     <!-- MEDICATION LIST -->
     <div class="card">
-      <div class="card-title">💊 Medication List</div>
+      <div class="card-title">Medication List</div>
       <table>
         <thead><tr>
           <th style="width:18px">#</th>
@@ -3042,7 +3080,7 @@
 
     <!-- OTHER MEDICAL INFORMATION -->
     <div class="card">
-      <div class="card-title">📋 Other Medical Information</div>
+      <div class="card-title">Other Medical Information</div>
       <div class="card-body">
         ${otherCards}
       </div>
@@ -3053,7 +3091,7 @@
 
     <!-- BLOOD PRESSURE & ECG READINGS -->
     <div class="card">
-      <div class="card-title">❤️ Blood Pressure &amp; ECG Readings</div>
+      <div class="card-title">Blood Pressure &amp; ECG Readings</div>
       <table>
         <thead><tr>
           <th>Date</th><th>Time</th>
@@ -3070,7 +3108,7 @@
 
     <!-- GENERAL NOTES -->
     <div class="card">
-      <div class="card-title">📝 General Notes</div>
+      <div class="card-title">General Notes &amp; Clinical Episodes</div>
       <table>
         <thead><tr>
           <th style="width:75px">Date</th>
@@ -3086,13 +3124,13 @@
 
 <!-- PAGE FOOTER -->
 <div class="page-footer">
-  Medical Information App &nbsp;|&nbsp; All data stored locally in your browser
-  &nbsp;|&nbsp; Patient: ${esc(patientDetails.name)||'—'}
-  &nbsp;|&nbsp; Doctor: ${esc(surgeryDetails.doctorName)||'—'}
+  <span>Patient Medical Information Report &nbsp;|&nbsp; Patient: ${esc(patientDetails.name)||'—'} &nbsp;|&nbsp; Doctor: ${esc(surgeryDetails.doctorName)||'—'}</span>
+  <span class="conf-notice">&#x1F512; Confidential &mdash; NHS Clinical Document</span>
+  <span>Data stored locally &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString('en-GB')}</span>
 </div>
 
 <div class="no-print">
-  <button onclick="window.print()" style="padding:9px 22px;background:#1a7a3c;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;margin-right:8px;">
+  <button onclick="window.print()" style="padding:9px 22px;background:#003087;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;margin-right:8px;">
     🖨️ Print / Save as PDF
   </button>
   <button onclick="window.close()" style="padding:9px 22px;background:#c0392b;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:700;">
@@ -3175,19 +3213,19 @@
             }
             
             function saveCaptureAsText() {
-                const html = buildCaptureHTML();
-                const dataBlob = new Blob([html], {type: 'text/html'});
+                const captureText = document.getElementById('capture-content').textContent;
+                const dataBlob = new Blob([captureText], {type: 'text/plain'});
                 const url = URL.createObjectURL(dataBlob);
                 
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `patient-medical-summary-${new Date().toISOString().slice(0, 10)}.html`;
+                link.download = `patient-medical-summary-${new Date().toISOString().slice(0, 10)}.txt`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
                 
-                showStatus('Summary saved as HTML file!', 'success');
+                showStatus('Summary saved as text file!', 'success');
             }
             
             function backupData() {
